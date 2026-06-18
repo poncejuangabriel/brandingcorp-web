@@ -1,944 +1,198 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BrandingCorp — Potenciamos tu gimnasio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --red:      #C41C1C;
-      --red-dark: #9E1515;
-      --red-glow: rgba(196, 28, 28, 0.15);
-      --black:    #0A0A0A;
-      --dark:     #111111;
-      --mid:      #1A1A1A;
-      --border:   #252525;
-      --silver:   #8A8A8A;
-      --silver-lt:#B0B0B0;
-      --text:     #E0E0E0;
-      --white:    #FFFFFF;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--black);
-      color: var(--text);
-      font-family: 'Montserrat', sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ══════ NAV ══════ */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 5rem;
-      background: rgba(10,10,10,0.92);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-    }
-
-    /* Logo SVG completo */
-    .logo-full {
-      height: 42px;
-      width: auto;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
-    }
-    .nav-links a {
-      text-decoration: none;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--silver);
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--white); }
-
-    .nav-cta {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--white);
-      text-decoration: none;
-      background: var(--red);
-      padding: 0.6rem 1.5rem;
-      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-      transition: background 0.2s;
-    }
-    .nav-cta:hover { background: var(--red-dark); }
-
-    /* ══════ HERO ══════ */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 9rem 2rem 6rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-grid-bg {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(196,28,28,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(196,28,28,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-    }
-
-    .hero-glow {
-      position: absolute;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 700px;
-      height: 400px;
-      background: radial-gradient(ellipse, rgba(196,28,28,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-eyebrow {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--red);
-      margin-bottom: 2rem;
-    }
-    .hero-eyebrow::before,
-    .hero-eyebrow::after {
-      content: '';
-      display: block;
-      width: 2rem;
-      height: 1px;
-      background: var(--red);
-    }
-
-    h1 {
-      font-size: clamp(2.8rem, 6.5vw, 5.5rem);
-      font-weight: 900;
-      line-height: 1.0;
-      color: var(--white);
-      text-transform: uppercase;
-      letter-spacing: -0.01em;
-      max-width: 900px;
-      margin-bottom: 1.5rem;
-    }
-    h1 .accent { color: var(--red); }
-    h1 .thin { font-weight: 300; }
-
-    .hero-sub {
-      font-size: 1rem;
-      font-weight: 400;
-      color: var(--silver);
-      max-width: 500px;
-      margin: 0 auto 3rem;
-      line-height: 1.8;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      display: inline-block;
-      background: var(--red);
-      color: var(--white);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 1rem 2.5rem;
-      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
-      transition: background 0.2s, transform 0.15s;
-    }
-    .btn-primary:hover { background: var(--red-dark); transform: translateY(-2px); }
-
-    .btn-outline {
-      display: inline-block;
-      background: transparent;
-      color: var(--white);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 1rem 2.5rem;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s;
-    }
-    .btn-outline:hover { border-color: var(--silver); }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--silver);
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    .hero-scroll::after {
-      content: '';
-      width: 1px;
-      height: 36px;
-      background: linear-gradient(to bottom, var(--silver), transparent);
-    }
-
-    /* ══════ STATS BAR ══════ */
-    .stats-bar {
-      background: var(--dark);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 2.5rem 5rem;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      divide-x: 1px solid var(--border);
-    }
-
-    .stat-item {
-      text-align: center;
-      border-right: 1px solid var(--border);
-      padding: 0.5rem 1rem;
-    }
-    .stat-item:last-child { border-right: none; }
-
-    .stat-num {
-      display: block;
-      font-size: 2.4rem;
-      font-weight: 900;
-      color: var(--red);
-      line-height: 1;
-      margin-bottom: 0.4rem;
-      letter-spacing: -0.02em;
-    }
-    .stat-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--silver);
-    }
-
-    /* ══════ SECTION COMMONS ══════ */
-    section { padding: 7rem 5rem; }
-
-    .section-eyebrow {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--red);
-      margin-bottom: 1.2rem;
-    }
-    .section-eyebrow::before {
-      content: '';
-      display: block;
-      width: 1.5rem;
-      height: 2px;
-      background: var(--red);
-      flex-shrink: 0;
-    }
-
-    .section-title {
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      font-weight: 800;
-      color: var(--white);
-      text-transform: uppercase;
-      line-height: 1.05;
-      letter-spacing: -0.01em;
-      margin-bottom: 1rem;
-    }
-
-    .section-body {
-      font-size: 0.95rem;
-      font-weight: 400;
-      color: var(--silver);
-      line-height: 1.85;
-      max-width: 520px;
-    }
-
-    /* ══════ ABOUT ══════ */
-    #about { background: var(--dark); }
-
-    .about-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6rem;
-      align-items: center;
-    }
-
-    .about-visual {
-      position: relative;
-    }
-
-    .about-card {
-      background: var(--mid);
-      border: 1px solid var(--border);
-      padding: 3.5rem;
-      position: relative;
-    }
-
-    .about-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px;
-      height: 60%;
-      background: var(--red);
-    }
-
-    .about-card-num {
-      font-size: 6rem;
-      font-weight: 900;
-      color: rgba(196,28,28,0.08);
-      line-height: 1;
-      margin-bottom: -1rem;
-      letter-spacing: -0.05em;
-    }
-
-    .about-card-quote {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--white);
-      text-transform: uppercase;
-      line-height: 1.3;
-      letter-spacing: 0.02em;
-    }
-
-    .about-card-sub {
-      margin-top: 1.2rem;
-      font-size: 0.85rem;
-      color: var(--silver);
-      font-weight: 400;
-    }
-
-    .about-badge {
-      position: absolute;
-      bottom: -1px;
-      right: -1px;
-      background: var(--red);
-      color: var(--white);
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.5rem 1rem;
-    }
-
-    .about-values {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-top: 2.5rem;
-    }
-
-    .value-card {
-      border: 1px solid var(--border);
-      padding: 1.2rem 1.4rem;
-      background: var(--mid);
-      transition: border-color 0.2s;
-    }
-    .value-card:hover { border-color: var(--red); }
-
-    .value-num {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      color: var(--red);
-      margin-bottom: 0.3rem;
-    }
-    .value-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--white);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    /* ══════ SERVICES ══════ */
-    #services {
-      padding: 7rem 5rem;
-    }
-
-    .services-inner { max-width: 1200px; margin: 0 auto; }
-
-    .services-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: end;
-      margin-bottom: 3.5rem;
-    }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .service-card {
-      background: var(--dark);
-      padding: 2.5rem;
-      position: relative;
-      transition: background 0.2s;
-      overflow: hidden;
-    }
-    .service-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--red);
-      transition: width 0.3s;
-    }
-    .service-card:hover { background: var(--mid); }
-    .service-card:hover::after { width: 100%; }
-
-    .service-num {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      color: var(--red);
-      margin-bottom: 1.2rem;
-    }
-
-    .service-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--white);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.75rem;
-    }
-
-    .service-desc {
-      font-size: 0.83rem;
-      color: var(--silver);
-      line-height: 1.75;
-    }
-
-    /* ══════ PROCESS ══════ */
-    #process { background: var(--dark); }
-
-    .process-inner {
-      max-width: 1000px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
-      margin-top: 4rem;
-      border: 1px solid var(--border);
-    }
-
-    .step {
-      padding: 2.5rem 2rem;
-      border-right: 1px solid var(--border);
-      text-align: left;
-      position: relative;
-      transition: background 0.2s;
-    }
-    .step:last-child { border-right: none; }
-    .step:hover { background: var(--mid); }
-
-    .step-num {
-      font-size: 3rem;
-      font-weight: 900;
-      color: rgba(196,28,28,0.15);
-      line-height: 1;
-      margin-bottom: 1rem;
-      letter-spacing: -0.04em;
-    }
-
-    .step-line {
-      width: 2rem;
-      height: 2px;
-      background: var(--red);
-      margin-bottom: 1rem;
-    }
-
-    .step-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--white);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.5rem;
-    }
-
-    .step-desc {
-      font-size: 0.8rem;
-      color: var(--silver);
-      line-height: 1.7;
-    }
-
-    /* ══════ CONTACT ══════ */
-    #contact {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 7rem 2rem;
-    }
-
-    .contact-header { text-align: center; margin-bottom: 3rem; }
-    .contact-header .section-eyebrow { justify-content: center; }
-    .contact-header .section-eyebrow::before { display: none; }
-
-    .contact-form {
-      background: var(--dark);
-      border: 1px solid var(--border);
-      padding: 3rem;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .form-group.full { grid-column: 1/-1; }
-
-    label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--silver-lt);
-    }
-
-    input, textarea, select {
-      background: var(--mid);
-      border: 1px solid var(--border);
-      padding: 0.85rem 1rem;
-      font-size: 0.875rem;
-      color: var(--white);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 400;
-      outline: none;
-      transition: border-color 0.2s;
-      width: 100%;
-      border-radius: 0;
-    }
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--red);
-    }
-    input::placeholder, textarea::placeholder { color: #3a3a3a; }
-
-    textarea { resize: vertical; min-height: 120px; }
-    select { appearance: none; cursor: pointer; }
-    select option { background: var(--mid); }
-
-    .form-submit {
-      width: 100%;
-      background: var(--red);
-      color: var(--white);
-      border: none;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 1.1rem;
-      cursor: pointer;
-      margin-top: 0.5rem;
-      transition: background 0.2s;
-      font-family: 'Montserrat', sans-serif;
-      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
-    }
-    .form-submit:hover { background: var(--red-dark); }
-
-    .contact-alt {
-      margin-top: 1.5rem;
-      text-align: center;
-      font-size: 0.82rem;
-      color: var(--silver);
-      font-weight: 400;
-    }
-    .contact-alt a { color: var(--red); text-decoration: none; font-weight: 600; }
-    .contact-alt a:hover { text-decoration: underline; }
-
-    /* ══════ FOOTER ══════ */
-    footer {
-      background: var(--dark);
-      border-top: 1px solid var(--border);
-      padding: 2.5rem 5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-    }
-
-    .footer-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      text-decoration: none;
-    }
-    .footer-logo-text {
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: var(--white);
-      letter-spacing: 0.04em;
-    }
-    .footer-logo-text span { color: var(--red); font-weight: 300; }
-
-    .footer-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-    .footer-links a {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--silver);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .footer-links a:hover { color: var(--white); }
-
-    .footer-copy {
-      font-size: 0.72rem;
-      color: #444;
-      letter-spacing: 0.05em;
-    }
-
-    /* ══════ MOBILE ══════ */
-    @media (max-width: 960px) {
-      nav { padding: 1.2rem 1.5rem; }
-      .nav-links { display: none; }
-      section { padding: 5rem 1.5rem; }
-      .stats-bar { grid-template-columns: repeat(2,1fr); padding: 2.5rem 1.5rem; gap: 1.5rem 0; }
-      .stat-item:nth-child(2) { border-right: none; }
-      .about-inner { grid-template-columns: 1fr; gap: 3rem; }
-      .services-header { grid-template-columns: 1fr; gap: 1.5rem; }
-      .services-grid { grid-template-columns: 1fr 1fr; }
-      .steps { grid-template-columns: 1fr 1fr; }
-      .step { border-bottom: 1px solid var(--border); }
-      .form-row { grid-template-columns: 1fr; }
-      footer { flex-direction: column; align-items: flex-start; padding: 2.5rem 1.5rem; }
-    }
-
-    @media (max-width: 600px) {
-      .services-grid { grid-template-columns: 1fr; }
-      .steps { grid-template-columns: 1fr; }
-      h1 { font-size: 2.4rem; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BrandingCorp — Potenciamos tu gimnasio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:#0A0A0B;font-family:Montserrat,system-ui,sans-serif;color:#EDEDEE;overflow-x:hidden;}
+::selection{background:#B22020;color:#fff;}
+.ph{background-color:#141416;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.045) 0 2px,transparent 2px 11px);}
+.nav-link{text-decoration:none;color:#C9C9CB;font-size:13px;font-weight:600;letter-spacing:1.5px;transition:color .15s;}
+.nav-link:hover{color:#fff;}
+.btn-red{text-decoration:none;display:inline-block;background:#B22020;color:#fff;font-size:13px;font-weight:800;letter-spacing:1.5px;padding:12px 26px;border-radius:3px;transition:background .15s,transform .15s;box-shadow:0 6px 20px rgba(178,32,32,0.35);}
+.btn-red:hover{background:#C8302F;transform:translateY(-1px);}
+.btn-red-lg{text-decoration:none;display:inline-block;background:#B22020;color:#fff;font-size:15px;font-weight:800;letter-spacing:1px;padding:17px 38px;border-radius:3px;transition:background .15s,transform .15s;box-shadow:0 10px 30px rgba(178,32,32,0.4);}
+.btn-red-lg:hover{background:#C8302F;transform:translateY(-2px);}
+.btn-outline{text-decoration:none;display:inline-block;color:#fff;font-size:15px;font-weight:700;letter-spacing:1px;padding:17px 34px;border-radius:3px;border:1px solid rgba(255,255,255,0.18);transition:border-color .15s,background .15s;}
+.btn-outline:hover{border-color:#fff;background:rgba(255,255,255,0.04);}
+.card{background:#121214;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:34px 30px;transition:border-color .18s,transform .18s;}
+.card:hover{border-color:rgba(178,32,32,0.55);transform:translateY(-4px);}
+.footer-link{text-decoration:none;color:#B6B6B9;font-size:14px;font-weight:500;}
+.footer-link:hover{color:#fff;}
+.footer-social{text-decoration:none;color:#8A8A8E;font-size:13px;font-weight:600;letter-spacing:1px;}
+.footer-social:hover{color:#fff;}
+input,textarea{background:#141416;border:1px solid rgba(255,255,255,0.12);border-radius:3px;padding:14px 18px;color:#fff;font-size:15px;font-family:Montserrat,sans-serif;outline:none;width:100%;}
+input:focus,textarea:focus{border-color:rgba(178,32,32,0.6);}
+button[type=submit]{border:none;cursor:pointer;width:100%;font-family:Montserrat,sans-serif;background:#B22020;color:#fff;font-size:15px;font-weight:800;letter-spacing:1px;padding:17px 38px;border-radius:3px;transition:background .15s;box-shadow:0 10px 30px rgba(178,32,32,0.4);}
+button[type=submit]:hover{background:#C8302F;}
+</style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <a href="#" class="logo"><svg class="logo-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 524 88" width="524" height="88" fill="none" role="img" aria-label="Branding Corp">
-  <path d="M3.50,2.75 L48.00,3.00 L54.50,6.00 L59.75,11.75 L58.75,15.00 L53.75,21.75 L52.25,21.50 L48.50,16.25 L43.75,14.00 L15.00,14.25 L15.25,73.25 L43.25,73.50 L48.50,71.75 L54.00,66.00 L59.75,74.50 L58.75,77.75 L53.50,82.50 L47.25,84.75 L3.75,85.00 L3.50,3.00Z M73.25,2.75 L104.75,3.25 L104.50,32.75 L93.25,32.50 L92.75,14.00 L79.75,14.00 L58.75,43.25 L59.50,45.75 L79.75,73.50 L92.50,73.75 L93.50,55.50 L104.00,55.25 L104.50,84.75 L72.50,84.75 L47.75,50.00 L21.50,48.50 L21.50,38.50 L22.50,37.75 L45.00,37.75 L50.00,35.00 L73.25,3.00Z M362.75,27.50 L371.00,28.25 L376.00,31.00 L377.25,33.25 L373.25,37.00 L368.25,34.00 L359.50,35.00 L356.25,38.25 L355.00,41.75 L356.25,48.75 L360.75,52.75 L368.75,53.00 L370.50,51.50 L370.50,43.50 L376.75,43.00 L377.00,55.75 L367.50,59.50 L358.25,58.75 L351.00,53.75 L347.75,45.75 L348.00,39.25 L350.75,33.75 L356.25,29.25 L362.75,27.75Z M408.50,27.75 L416.50,29.00 L420.50,32.75 L418.00,34.00 L412.75,31.00 L406.25,31.00 L403.00,32.25 L399.00,35.75 L397.00,39.50 L397.25,48.25 L400.50,53.00 L406.00,56.00 L413.00,56.00 L418.00,53.00 L419.75,53.25 L420.25,55.50 L413.75,59.00 L404.25,58.75 L396.25,53.25 L393.25,46.00 L394.00,38.00 L396.75,33.25 L402.50,29.00 L408.50,28.00Z M440.00,27.75 L446.25,28.25 L451.75,31.00 L456.75,37.75 L457.75,43.25 L455.75,51.50 L448.50,58.00 L443.50,59.25 L437.00,59.00 L429.25,54.75 L425.00,46.25 L426.00,37.25 L432.25,30.00 L440.00,28.00Z M127.50,28.00 L145.00,28.00 L151.25,30.25 L153.75,33.50 L154.00,38.00 L150.75,43.00 L154.00,45.50 L155.50,49.00 L154.75,54.50 L150.50,58.00 L146.75,59.00 L127.50,59.00 L127.50,28.25Z M161.25,28.00 L177.00,28.00 L181.50,29.25 L185.75,32.50 L187.75,37.00 L187.75,41.50 L186.00,45.75 L182.00,49.00 L182.00,50.25 L188.00,58.25 L180.50,59.00 L174.50,50.50 L168.50,50.50 L168.00,58.75 L161.00,58.75 L161.25,28.25Z M203.25,28.00 L210.75,28.75 L223.75,57.75 L223.50,59.00 L216.25,58.75 L213.50,52.50 L199.75,52.50 L197.00,58.75 L189.50,58.50 L203.25,28.25Z M227.50,28.00 L233.00,28.00 L247.25,45.50 L248.25,45.50 L248.25,28.50 L255.75,28.75 L255.75,58.50 L249.50,59.00 L234.25,41.25 L234.25,58.50 L227.50,59.00 L227.50,28.25Z M263.25,28.00 L279.75,28.00 L284.75,29.25 L290.75,33.50 L294.00,40.50 L293.00,50.00 L286.50,57.00 L280.25,59.00 L263.25,59.00 L263.25,28.25Z M300.00,28.00 L306.75,28.50 L306.75,58.50 L299.75,59.00 L300.00,28.25Z M314.25,28.00 L319.75,28.00 L334.25,45.75 L335.00,28.50 L342.25,28.25 L342.00,59.00 L336.25,59.00 L321.75,41.00 L321.00,58.75 L314.00,58.75 L314.25,28.25Z M465.25,28.00 L479.00,28.00 L483.50,29.25 L487.00,32.00 L489.00,36.25 L487.75,44.25 L482.25,48.50 L488.75,59.00 L485.50,58.75 L478.50,49.00 L468.25,49.25 L468.00,58.75 L465.25,59.00 L465.25,28.25Z M497.25,28.00 L511.00,28.00 L515.50,29.25 L519.00,32.00 L521.00,36.25 L520.75,42.00 L517.25,47.00 L512.75,49.00 L500.50,49.25 L500.00,58.75 L497.25,59.00 L497.25,28.25Z M438.25,31.00 L431.25,35.00 L429.00,38.75 L428.25,44.75 L429.00,48.25 L432.25,53.00 L440.00,56.25 L447.50,55.00 L451.75,51.50 L454.00,46.75 L454.00,40.50 L452.00,36.00 L449.00,33.00 L444.50,31.00 L438.50,31.00Z M468.50,31.00 L468.50,46.25 L481.00,45.75 L484.75,42.75 L485.75,39.00 L485.00,35.00 L482.00,32.00 L468.75,31.00Z M500.50,31.00 L500.50,46.25 L512.75,45.75 L516.75,42.75 L517.75,39.00 L516.75,34.50 L514.00,32.00 L500.75,31.00Z M135.50,33.50 L134.25,34.25 L135.00,40.75 L143.00,40.75 L146.75,38.00 L144.75,34.00 L135.75,33.50Z M168.75,34.00 L168.75,44.75 L177.00,44.25 L180.25,41.00 L180.00,36.75 L178.50,35.00 L169.00,34.00Z M270.75,34.00 L270.25,53.00 L282.00,52.00 L285.00,49.50 L286.75,44.75 L286.00,39.25 L283.50,36.00 L278.75,34.00 L271.00,34.00Z M206.50,36.00 L202.00,46.00 L202.50,47.00 L211.00,46.75 L206.75,36.00Z M135.00,46.00 L135.00,53.50 L145.50,53.25 L148.25,50.50 L148.00,48.00 L145.50,46.25 L135.25,46.00Z" fill="#FFFFFF" fill-rule="evenodd"></path>
-</svg></a>
-    <ul class="nav-links">
-      <li><a href="#about">Nosotros</a></li>
-      <li><a href="#services">Servicios</a></li>
-      <li><a href="#process">Proceso</a></li>
-      <li><a href="#contact">Contacto</a></li>
-    </ul>
-    <a href="#contact" class="nav-cta">Únete</a>
+<header style="position:sticky;top:0;z-index:50;background:rgba(10,10,11,0.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.07);">
+  <nav style="max-width:1240px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+    <a href="#top" style="display:flex;align-items:center;text-decoration:none;flex:none;">
+      <svg style="height:26px;width:auto;display:block;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 524 88" fill="none" role="img" aria-label="Branding Corp"><path d="M3.50,2.75 L48.00,3.00 L54.50,6.00 L59.75,11.75 L58.75,15.00 L53.75,21.75 L52.25,21.50 L48.50,16.25 L43.75,14.00 L15.00,14.25 L15.25,73.25 L43.25,73.50 L48.50,71.75 L54.00,66.00 L59.75,74.50 L58.75,77.75 L53.50,82.50 L47.25,84.75 L3.75,85.00 L3.50,3.00Z M73.25,2.75 L104.75,3.25 L104.50,32.75 L93.25,32.50 L92.75,14.00 L79.75,14.00 L58.75,43.25 L59.50,45.75 L79.75,73.50 L92.50,73.75 L93.50,55.50 L104.00,55.25 L104.50,84.75 L72.50,84.75 L47.75,50.00 L21.50,48.50 L21.50,38.50 L22.50,37.75 L45.00,37.75 L50.00,35.00 L73.25,3.00Z M362.75,27.50 L371.00,28.25 L376.00,31.00 L377.25,33.25 L373.25,37.00 L368.25,34.00 L359.50,35.00 L356.25,38.25 L355.00,41.75 L356.25,48.75 L360.75,52.75 L368.75,53.00 L370.50,51.50 L370.50,43.50 L376.75,43.00 L377.00,55.75 L367.50,59.50 L358.25,58.75 L351.00,53.75 L347.75,45.75 L348.00,39.25 L350.75,33.75 L356.25,29.25 L362.75,27.75Z M408.50,27.75 L416.50,29.00 L420.50,32.75 L418.00,34.00 L412.75,31.00 L406.25,31.00 L403.00,32.25 L399.00,35.75 L397.00,39.50 L397.25,48.25 L400.50,53.00 L406.00,56.00 L413.00,56.00 L418.00,53.00 L419.75,53.25 L420.25,55.50 L413.75,59.00 L404.25,58.75 L396.25,53.25 L393.25,46.00 L394.00,38.00 L396.75,33.25 L402.50,29.00 L408.50,28.00Z M440.00,27.75 L446.25,28.25 L451.75,31.00 L456.75,37.75 L457.75,43.25 L455.75,51.50 L448.50,58.00 L443.50,59.25 L437.00,59.00 L429.25,54.75 L425.00,46.25 L426.00,37.25 L432.25,30.00 L440.00,28.00Z M127.50,28.00 L145.00,28.00 L151.25,30.25 L153.75,33.50 L154.00,38.00 L150.75,43.00 L154.00,45.50 L155.50,49.00 L154.75,54.50 L150.50,58.00 L146.75,59.00 L127.50,59.00 L127.50,28.25Z M161.25,28.00 L177.00,28.00 L181.50,29.25 L185.75,32.50 L187.75,37.00 L187.75,41.50 L186.00,45.75 L182.00,49.00 L182.00,50.25 L188.00,58.25 L180.50,59.00 L174.50,50.50 L168.50,50.50 L168.00,58.75 L161.00,58.75 L161.25,28.25Z M203.25,28.00 L210.75,28.75 L223.75,57.75 L223.50,59.00 L216.25,58.75 L213.50,52.50 L199.75,52.50 L197.00,58.75 L189.50,58.50 L203.25,28.25Z M227.50,28.00 L233.00,28.00 L247.25,45.50 L248.25,45.50 L248.25,28.50 L255.75,28.75 L255.75,58.50 L249.50,59.00 L234.25,41.25 L234.25,58.50 L227.50,59.00 L227.50,28.25Z M263.25,28.00 L279.75,28.00 L284.75,29.25 L290.75,33.50 L294.00,40.50 L293.00,50.00 L286.50,57.00 L280.25,59.00 L263.25,59.00 L263.25,28.25Z M300.00,28.00 L306.75,28.50 L306.75,58.50 L299.75,59.00 L300.00,28.25Z M314.25,28.00 L319.75,28.00 L334.25,45.75 L335.00,28.50 L342.25,28.25 L342.00,59.00 L336.25,59.00 L321.75,41.00 L321.00,58.75 L314.00,58.75 L314.25,28.25Z M465.25,28.00 L479.00,28.00 L483.50,29.25 L487.00,32.00 L489.00,36.25 L487.75,44.25 L482.25,48.50 L488.75,59.00 L485.50,58.75 L478.50,49.00 L468.25,49.25 L468.00,58.75 L465.25,59.00 L465.25,28.25Z M497.25,28.00 L511.00,28.00 L515.50,29.25 L519.00,32.00 L521.00,36.25 L520.75,42.00 L517.25,47.00 L512.75,49.00 L500.50,49.25 L500.00,58.75 L497.25,59.00 L497.25,28.25Z M438.25,31.00 L431.25,35.00 L429.00,38.75 L428.25,44.75 L429.00,48.25 L432.25,53.00 L440.00,56.25 L447.50,55.00 L451.75,51.50 L454.00,46.75 L454.00,40.50 L452.00,36.00 L449.00,33.00 L444.50,31.00 L438.50,31.00Z M468.50,31.00 L468.50,46.25 L481.00,45.75 L484.75,42.75 L485.75,39.00 L485.00,35.00 L482.00,32.00 L468.75,31.00Z M500.50,31.00 L500.50,46.25 L512.75,45.75 L516.75,42.75 L517.75,39.00 L516.75,34.50 L514.00,32.00 L500.75,31.00Z M135.50,33.50 L134.25,34.25 L135.00,40.75 L143.00,40.75 L146.75,38.00 L144.75,34.00 L135.75,33.50Z M168.75,34.00 L168.75,44.75 L177.00,44.25 L180.25,41.00 L180.00,36.75 L178.50,35.00 L169.00,34.00Z M270.75,34.00 L270.25,53.00 L282.00,52.00 L285.00,49.50 L286.75,44.75 L286.00,39.25 L283.50,36.00 L278.75,34.00 L271.00,34.00Z M206.50,36.00 L202.00,46.00 L202.50,47.00 L211.00,46.75 L206.75,36.00Z M135.00,46.00 L135.00,53.50 L145.50,53.25 L148.25,50.50 L148.00,48.00 L145.50,46.25 L135.25,46.00Z" fill="#FFFFFF" fill-rule="evenodd"/></svg>
+    </a>
+    <div style="display:flex;align-items:center;gap:38px;">
+      <a href="#nosotros" class="nav-link">NOSOTROS</a>
+      <a href="#servicios" class="nav-link">SERVICIOS</a>
+      <a href="#proceso" class="nav-link">PROCESO</a>
+      <a href="#contacto" class="nav-link">CONTACTO</a>
+    </div>
+    <a href="#contacto" class="btn-red">UNETE</a>
   </nav>
+</header>
 
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-grid-bg"></div>
-    <div class="hero-glow"></div>
-    <div class="hero-eyebrow">Plataforma para gimnasios</div>
-    <h1>
-      <span class="thin">Llevamos tu</span><br />
-      gimnasio al<br />
-      <span class="accent">siguiente nivel</span>
+<section id="top" style="position:relative;padding:104px 32px 96px;overflow:hidden;background:radial-gradient(120% 90% at 78% 0%,rgba(178,32,32,0.16) 0%,rgba(178,32,32,0) 46%),#0A0A0B;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(120% 80% at 50% 20%,#000 40%,transparent 85%);"></div>
+  <div style="position:relative;max-width:1240px;margin:0 auto;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:30px;"><span style="width:42px;height:2px;background:#B22020;display:block;"></span><span style="color:#B22020;font-size:13px;font-weight:700;letter-spacing:4px;">PLATAFORMA PARA GIMNASIOS</span></div>
+    <h1 style="margin:0;max-width:980px;font-weight:900;letter-spacing:-0.02em;line-height:0.92;font-size:clamp(46px,7.4vw,108px);text-transform:uppercase;">
+      <span style="display:block;color:transparent;-webkit-text-stroke:1.5px #6E6E72;">Llevamos tu</span>
+      <span style="display:block;color:#FFFFFF;">Gimnasio al</span>
+      <span style="display:block;color:#B22020;">Siguiente nivel</span>
     </h1>
-    <p class="hero-sub">
-      La plataforma que conecta a los mejores gimnasios con sus comunidades.
-      Gestión, ventas y experiencia de marca unificadas bajo un solo techo.
-    </p>
-    <div class="hero-actions">
-      <a href="#contact" class="btn-primary">Únete ahora</a>
-      <a href="#about" class="btn-outline">Conoce más</a>
+    <p style="margin:34px 0 0;max-width:560px;font-size:18px;line-height:1.65;color:#A7A7AB;font-weight:500;">La plataforma que conecta a los mejores gimnasios con sus comunidades. Gestion, ventas y experiencia de marca unificadas bajo un solo techo.</p>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:42px;">
+      <a href="#contacto" class="btn-red-lg">UNETE AHORA</a>
+      <a href="#servicios" class="btn-outline">VER SERVICIOS</a>
     </div>
-    <div class="hero-scroll">Scroll</div>
-  </section>
-
-  <!-- STATS BAR -->
-  <div class="stats-bar">
-    <div class="stat-item">
-      <span class="stat-num">+50</span>
-      <span class="stat-label">Gimnasios aliados</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">+10K</span>
-      <span class="stat-label">Usuarios activos</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">98%</span>
-      <span class="stat-label">Satisfacción</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">24/7</span>
-      <span class="stat-label">Soporte disponible</span>
+    <div style="display:flex;flex-wrap:wrap;gap:28px;margin-top:64px;color:#6E6E72;font-size:13px;font-weight:600;letter-spacing:2px;">
+      <span>GESTION</span><span style="color:#B22020;">/</span><span>VENTAS</span><span style="color:#B22020;">/</span><span>MARCA</span><span style="color:#B22020;">/</span><span>COMUNIDAD</span>
     </div>
   </div>
+</section>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="about-inner">
-      <div class="about-visual">
-        <div class="about-card">
-          <div class="about-card-num">BC</div>
-          <div class="about-card-quote">El crecimiento de tu negocio fitness, en una sola plataforma.</div>
-          <p class="about-card-sub">Infraestructura digital para gimnasios que quieren escalar sin complicaciones.</p>
-          <div class="about-badge">Desde 2024</div>
-        </div>
-        <div class="about-values">
-          <div class="value-card">
-            <div class="value-num">01</div>
-            <div class="value-title">Excelencia</div>
-          </div>
-          <div class="value-card">
-            <div class="value-num">02</div>
-            <div class="value-title">Innovación</div>
-          </div>
-          <div class="value-card">
-            <div class="value-num">03</div>
-            <div class="value-title">Confianza</div>
-          </div>
-          <div class="value-card">
-            <div class="value-num">04</div>
-            <div class="value-title">Comunidad</div>
-          </div>
-        </div>
-      </div>
-      <div class="about-content">
-        <div class="section-eyebrow">Quiénes somos</div>
-        <h2 class="section-title">Somos el puente entre los gimnasios y sus comunidades</h2>
-        <p class="section-body" style="margin-bottom:1.2rem;">
-          BrandingCorp nació para resolver un problema claro: los gimnasios necesitan
-          tecnología de alto nivel para gestionar sus operaciones, pero no siempre tienen
-          los recursos para construirla. Nosotros lo hacemos por ellos.
-        </p>
-        <p class="section-body">
-          Proveemos infraestructura digital — desde tiendas online hasta gestión de membresías —
-          bajo la identidad de cada gimnasio aliado, para que sus clientes vivan una experiencia
-          coherente y premium.
-        </p>
+<section style="border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);background:#0E0E10;">
+  <div style="max-width:1240px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:repeat(4,1fr);">
+    <div style="padding:40px 28px;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;gap:8px;"><span style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;">+120</span><span style="font-size:13px;font-weight:600;letter-spacing:1.5px;color:#8A8A8E;">GIMNASIOS POTENCIADOS</span></div>
+    <div style="padding:40px 28px;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;gap:8px;"><span style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;">+35<span style="color:#B22020;">%</span></span><span style="font-size:13px;font-weight:600;letter-spacing:1.5px;color:#8A8A8E;">RETENCION DE SOCIOS</span></div>
+    <div style="padding:40px 28px;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;gap:8px;"><span style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;">x3</span><span style="font-size:13px;font-weight:600;letter-spacing:1.5px;color:#8A8A8E;">CAPTACION DE LEADS</span></div>
+    <div style="padding:40px 28px;display:flex;flex-direction:column;gap:8px;"><span style="font-size:46px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;">24/7</span><span style="font-size:13px;font-weight:600;letter-spacing:1.5px;color:#8A8A8E;">SOPORTE DEDICADO</span></div>
+  </div>
+</section>
+
+<section id="nosotros" style="padding:110px 32px;background:#0A0A0B;">
+  <div style="max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1.05fr 0.95fr;gap:72px;align-items:center;">
+    <div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:26px;"><span style="width:32px;height:2px;background:#B22020;display:block;"></span><span style="color:#B22020;font-size:13px;font-weight:700;letter-spacing:4px;">NOSOTROS</span></div>
+      <h2 style="margin:0;font-size:clamp(30px,3.6vw,48px);font-weight:800;line-height:1.08;letter-spacing:-0.01em;color:#fff;">El motor de marca detras de los gimnasios que crecen</h2>
+      <p style="margin:26px 0 0;font-size:17px;line-height:1.7;color:#A7A7AB;font-weight:500;">En BrandingCorp unificamos gestion, ventas y experiencia de marca en una sola plataforma. Ayudamos a centros fitness a profesionalizar su operacion, fidelizar a su comunidad y escalar sus ingresos con un sistema probado.</p>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:34px;">
+        <div style="display:flex;align-items:center;gap:14px;"><span style="flex:none;width:9px;height:9px;background:#B22020;transform:rotate(45deg);display:block;"></span><span style="font-size:15px;font-weight:600;color:#D8D8DA;">Estrategia de marca alineada a tu negocio</span></div>
+        <div style="display:flex;align-items:center;gap:14px;"><span style="flex:none;width:9px;height:9px;background:#B22020;transform:rotate(45deg);display:block;"></span><span style="font-size:15px;font-weight:600;color:#D8D8DA;">Tecnologia y datos para decidir mejor</span></div>
+        <div style="display:flex;align-items:center;gap:14px;"><span style="flex:none;width:9px;height:9px;background:#B22020;transform:rotate(45deg);display:block;"></span><span style="font-size:15px;font-weight:600;color:#D8D8DA;">Acompanamiento real, no plantillas genericas</span></div>
       </div>
     </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section id="services">
-    <div class="services-inner">
-      <div class="services-header">
-        <div>
-          <div class="section-eyebrow">Servicios</div>
-          <h2 class="section-title">Todo lo que tu gimnasio necesita para crecer</h2>
-        </div>
-        <p class="section-body">
-          Cada gimnasio aliado accede a una suite completa de herramientas digitales
-          diseñadas para maximizar ingresos y fidelizar clientes.
-        </p>
-      </div>
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-num">— 01</div>
-          <div class="service-title">Tienda Online Propia</div>
-          <p class="service-desc">Tu gimnasio tendrá su propio espacio de venta online — suplementos, accesorios, membresías y más — bajo tu marca.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-num">— 02</div>
-          <div class="service-title">Gestión de Membresías</div>
-          <p class="service-desc">Control total de altas, bajas y renovaciones. Automatizado y sin fricción para tus clientes.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-num">— 03</div>
-          <div class="service-title">Dashboard de Negocio</div>
-          <p class="service-desc">Métricas en tiempo real: ventas, retención, productos más vendidos y comportamiento de tus socios.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-num">— 04</div>
-          <div class="service-title">App para tus Clientes</div>
-          <p class="service-desc">Tus socios gestionan su membresía, compran productos y reservan clases desde una sola app.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-num">— 05</div>
-          <div class="service-title">Marketing Automatizado</div>
-          <p class="service-desc">Campañas de retención, promociones y comunicación segmentada para mantener a tus clientes activos.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-num">— 06</div>
-          <div class="service-title">Soporte Dedicado</div>
-          <p class="service-desc">Equipo a tu disposición para onboarding, configuración y resolución de dudas en tiempo real.</p>
-        </div>
-      </div>
+    <div style="position:relative;">
+      <div class="ph" style="aspect-ratio:4/5;border-radius:4px;border:1px solid rgba(255,255,255,0.08);display:flex;align-items:flex-end;padding:22px;"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7C7C80;letter-spacing:0.5px;">foto · equipo / gimnasio en accion</span></div>
+      <div style="position:absolute;left:-22px;bottom:36px;background:#B22020;color:#fff;padding:22px 26px;border-radius:4px;max-width:210px;box-shadow:0 18px 50px rgba(0,0,0,0.5);"><div style="font-size:34px;font-weight:900;line-height:1;">100%</div><div style="font-size:12px;font-weight:600;letter-spacing:1px;margin-top:6px;opacity:0.92;">ENFOCADOS EN EL SECTOR FITNESS</div></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- PROCESS -->
-  <section id="process">
-    <div class="process-inner">
-      <div class="section-eyebrow" style="justify-content:center;">Cómo funciona</div>
-      <h2 class="section-title" style="margin-bottom:0.5rem;">De cero a operativo en 4 pasos</h2>
-      <p class="section-body" style="margin:0 auto;">
-        Nos encargamos de todo el proceso técnico. Tú te enfocas en tu gimnasio y tus clientes.
-      </p>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <div class="step-line"></div>
-          <div class="step-title">Contacto</div>
-          <p class="step-desc">Nos cuentas sobre tu gimnasio y evaluamos el encaje juntos.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <div class="step-line"></div>
-          <div class="step-title">Onboarding</div>
-          <p class="step-desc">Configuramos tu plataforma completa con tu identidad visual.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <div class="step-line"></div>
-          <div class="step-title">Lanzamiento</div>
-          <p class="step-desc">Tu tienda y herramientas quedan activas para tus clientes.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <div class="step-line"></div>
-          <div class="step-title">Crecimiento</div>
-          <p class="step-desc">Escalamos juntos con soporte continuo y nuevas funciones.</p>
-        </div>
-      </div>
+<section id="servicios" style="padding:110px 32px;background:#0E0E10;border-top:1px solid rgba(255,255,255,0.07);">
+  <div style="max-width:1240px;margin:0 auto;">
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:60px;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;"><span style="width:32px;height:2px;background:#B22020;display:block;"></span><span style="color:#B22020;font-size:13px;font-weight:700;letter-spacing:4px;">SERVICIOS</span><span style="width:32px;height:2px;background:#B22020;display:block;"></span></div>
+      <h2 style="margin:0;font-size:clamp(30px,3.6vw,48px);font-weight:800;line-height:1.08;letter-spacing:-0.01em;color:#fff;max-width:720px;">Todo lo que tu gimnasio necesita, bajo un solo techo</h2>
     </div>
-  </section>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      <div class="card"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#B22020;font-weight:500;letter-spacing:1px;">01</div><h3 style="margin:16px 0 10px;font-size:21px;font-weight:800;color:#fff;">Gestion integral</h3><p style="margin:0;font-size:15px;line-height:1.6;color:#9A9A9E;font-weight:500;">Socios, reservas, cobros y operacion diaria centralizados en un unico panel claro.</p></div>
+      <div class="card"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#B22020;font-weight:500;letter-spacing:1px;">02</div><h3 style="margin:16px 0 10px;font-size:21px;font-weight:800;color:#fff;">Captacion de socios</h3><p style="margin:0;font-size:15px;line-height:1.6;color:#9A9A9E;font-weight:500;">Embudos de venta y campanas que llenan tu sala con socios que encajan con tu marca.</p></div>
+      <div class="card"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#B22020;font-weight:500;letter-spacing:1px;">03</div><h3 style="margin:16px 0 10px;font-size:21px;font-weight:800;color:#fff;">Experiencia de marca</h3><p style="margin:0;font-size:15px;line-height:1.6;color:#9A9A9E;font-weight:500;">Identidad, contenido y presencia coherentes que te diferencian de la competencia.</p></div>
+      <div class="card"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#B22020;font-weight:500;letter-spacing:1px;">04</div><h3 style="margin:16px 0 10px;font-size:21px;font-weight:800;color:#fff;">Marketing y Redes</h3><p style="margin:0;font-size:15px;line-height:1.6;color:#9A9A9E;font-weight:500;">Estrategia y gestion de redes sociales orientada a resultados, no a vanidad.</p></div>
+      <div class="card"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#B22020;font-weight:500;letter-spacing:1px;">05</div><h3 style="margin:16px 0 10px;font-size:21px;font-weight:800;color:#fff;">Web y App propias</h3><p style="margin:0;font-size:15px;line-height:1.6;color:#9A9A9E;font-weight:500;">Tu gimnasio con web y app a medida, integradas con la plataforma de gestion.</p></div>
+      <div class="card"><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#B22020;font-weight:500;letter-spacing:1px;">06</div><h3 style="margin:16px 0 10px;font-size:21px;font-weight:800;color:#fff;">Datos y Crecimiento</h3><p style="margin:0;font-size:15px;line-height:1.6;color:#9A9A9E;font-weight:500;">Metricas claras y reportes accionables para decidir, optimizar y escalar.</p></div>
+    </div>
+  </div>
+</section>
 
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="contact-header">
-      <div class="section-eyebrow">Contacto</div>
-      <h2 class="section-title">¿Listo para unirte?</h2>
-      <p class="section-body" style="margin: 0 auto; max-width: 480px; text-align: center;">
-        Completa el formulario y un miembro de nuestro equipo se pondrá en contacto
-        en menos de 24 horas.
-      </p>
+<section id="proceso" style="padding:110px 32px;background:#0A0A0B;">
+  <div style="max-width:1240px;margin:0 auto;">
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:64px;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;"><span style="width:32px;height:2px;background:#B22020;display:block;"></span><span style="color:#B22020;font-size:13px;font-weight:700;letter-spacing:4px;">PROCESO</span><span style="width:32px;height:2px;background:#B22020;display:block;"></span></div>
+      <h2 style="margin:0;font-size:clamp(30px,3.6vw,48px);font-weight:800;line-height:1.08;letter-spacing:-0.01em;color:#fff;max-width:680px;">Un metodo claro, de la primera reunion al crecimiento</h2>
     </div>
-    <form class="contact-form" action="https://formspree.io/f/xwvjjvpl" method="POST">
-      <!-- Redirigir tras envío -->
-      <input type="hidden" name="_next" value="https://brandingcorp.es/#contact" />
-      <input type="hidden" name="_subject" value="Nuevo contacto desde brandingcorp.es" />
-      <div class="form-row">
-        <div class="form-group">
-          <label for="name">Nombre</label>
-          <input type="text" id="name" name="nombre" placeholder="Tu nombre completo" required />
-        </div>
-        <div class="form-group">
-          <label for="gym">Nombre del Gimnasio</label>
-          <input type="text" id="gym" name="gimnasio" placeholder="Ej: FitZone Madrid" required />
-        </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(255,255,255,0.08);border-radius:6px;overflow:hidden;">
+      <div style="padding:40px 30px;border-right:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:14px;"><span style="font-size:54px;font-weight:900;color:rgba(255,255,255,0.10);line-height:1;">01</span><h3 style="margin:0;font-size:19px;font-weight:800;color:#fff;">Diagnostico</h3><p style="margin:0;font-size:14px;line-height:1.6;color:#9A9A9E;font-weight:500;">Analizamos tu gimnasio, tu marca y tu mercado a fondo.</p></div>
+      <div style="padding:40px 30px;border-right:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:14px;"><span style="font-size:54px;font-weight:900;color:rgba(255,255,255,0.10);line-height:1;">02</span><h3 style="margin:0;font-size:19px;font-weight:800;color:#fff;">Estrategia</h3><p style="margin:0;font-size:14px;line-height:1.6;color:#9A9A9E;font-weight:500;">Disenamos el plan de marca, captacion y operacion.</p></div>
+      <div style="padding:40px 30px;border-right:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:14px;"><span style="font-size:54px;font-weight:900;color:rgba(255,255,255,0.10);line-height:1;">03</span><h3 style="margin:0;font-size:19px;font-weight:800;color:#fff;">Implementacion</h3><p style="margin:0;font-size:14px;line-height:1.6;color:#9A9A9E;font-weight:500;">Lanzamos plataforma, campanas y contenidos.</p></div>
+      <div style="padding:40px 30px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(180deg,rgba(178,32,32,0.10),transparent);"><span style="font-size:54px;font-weight:900;color:#B22020;line-height:1;">04</span><h3 style="margin:0;font-size:19px;font-weight:800;color:#fff;">Crecimiento</h3><p style="margin:0;font-size:14px;line-height:1.6;color:#9A9A9E;font-weight:500;">Medimos, optimizamos y escalamos resultados.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:110px 32px;background:#0E0E10;border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);">
+  <div style="max-width:980px;margin:0 auto;text-align:center;">
+    <div style="font-size:64px;font-weight:900;color:#B22020;line-height:0.6;height:34px;">"</div>
+    <blockquote style="margin:0;font-size:clamp(24px,3vw,36px);font-weight:700;line-height:1.3;color:#fff;letter-spacing:-0.01em;">Desde que trabajamos con BrandingCorp, nuestra captacion de socios se disparo y la marca por fin transmite lo que realmente somos.</blockquote>
+    <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:34px;">
+      <div class="ph" style="width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);flex:none;"></div>
+      <div style="text-align:left;"><div style="font-size:15px;font-weight:700;color:#fff;">Nombre Apellido</div><div style="font-size:13px;font-weight:500;color:#8A8A8E;">Director · Gimnasio Cliente</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" style="position:relative;padding:120px 32px;background:radial-gradient(110% 130% at 50% 0%,rgba(178,32,32,0.18) 0%,rgba(178,32,32,0) 55%),#0A0A0B;overflow:hidden;">
+  <div style="position:relative;max-width:880px;margin:0 auto;text-align:center;">
+    <h2 style="margin:0;font-size:clamp(34px,5vw,64px);font-weight:900;line-height:1.02;letter-spacing:-0.02em;text-transform:uppercase;color:#fff;">Listo para llevar tu gimnasio al <span style="color:#B22020;">siguiente nivel</span>?</h2>
+    <p style="margin:26px auto 0;max-width:560px;font-size:17px;line-height:1.65;color:#A7A7AB;font-weight:500;">Reserva una consulta gratuita y te mostramos como BrandingCorp puede transformar tu gimnasio.</p>
+    <form action="https://formspree.io/f/xwvjjvpl" method="POST" style="max-width:540px;margin:42px auto 0;display:flex;flex-direction:column;gap:14px;text-align:left;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <input type="text" name="nombre" placeholder="Tu nombre" required>
+        <input type="text" name="gimnasio" placeholder="Nombre del gimnasio" required>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="tu@email.com" required />
-        </div>
-        <div class="form-group">
-          <label for="phone">Teléfono</label>
-          <input type="tel" id="phone" name="telefono" placeholder="+34 000 000 000" />
-        </div>
-      </div>
-      <div class="form-group full">
-        <label for="size">Tamaño del gimnasio</label>
-        <select id="size" name="tamano_gimnasio">
-          <option value="" disabled selected>Selecciona una opción</option>
-          <option>Menos de 200 socios</option>
-          <option>200 – 500 socios</option>
-          <option>500 – 1.000 socios</option>
-          <option>Más de 1.000 socios</option>
-        </select>
-      </div>
-      <div class="form-group full">
-        <label for="message">Mensaje (opcional)</label>
-        <textarea id="message" name="mensaje" placeholder="Cuéntanos sobre tu gimnasio o cualquier pregunta que tengas..."></textarea>
-      </div>
-      <button class="form-submit" type="submit">Enviar mensaje</button>
+      <input type="email" name="email" placeholder="Email de contacto" required>
+      <input type="tel" name="telefono" placeholder="Telefono">
+      <textarea name="mensaje" placeholder="Cuentanos sobre tu gimnasio" rows="4" style="resize:vertical;"></textarea>
+      <button type="submit">ENVIAR CONSULTA</button>
     </form>
-    <p class="contact-alt">
-      O escríbenos a <a href="mailto:contacto@brandingcorp.es">contacto@brandingcorp.es</a>
-    </p>
-  </section>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:32px;margin-top:42px;color:#8A8A8E;font-size:14px;font-weight:600;">
+      <span>contacto@brandingcorp.es</span><span style="color:#B22020;">·</span><span>brandingcorp.es</span>
+    </div>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    <a href="#" class="footer-logo"><svg style="height:32px;width:auto;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 524 88" width="524" height="88" fill="none" role="img" aria-label="Branding Corp">
-  <path d="M3.50,2.75 L48.00,3.00 L54.50,6.00 L59.75,11.75 L58.75,15.00 L53.75,21.75 L52.25,21.50 L48.50,16.25 L43.75,14.00 L15.00,14.25 L15.25,73.25 L43.25,73.50 L48.50,71.75 L54.00,66.00 L59.75,74.50 L58.75,77.75 L53.50,82.50 L47.25,84.75 L3.75,85.00 L3.50,3.00Z M73.25,2.75 L104.75,3.25 L104.50,32.75 L93.25,32.50 L92.75,14.00 L79.75,14.00 L58.75,43.25 L59.50,45.75 L79.75,73.50 L92.50,73.75 L93.50,55.50 L104.00,55.25 L104.50,84.75 L72.50,84.75 L47.75,50.00 L21.50,48.50 L21.50,38.50 L22.50,37.75 L45.00,37.75 L50.00,35.00 L73.25,3.00Z M362.75,27.50 L371.00,28.25 L376.00,31.00 L377.25,33.25 L373.25,37.00 L368.25,34.00 L359.50,35.00 L356.25,38.25 L355.00,41.75 L356.25,48.75 L360.75,52.75 L368.75,53.00 L370.50,51.50 L370.50,43.50 L376.75,43.00 L377.00,55.75 L367.50,59.50 L358.25,58.75 L351.00,53.75 L347.75,45.75 L348.00,39.25 L350.75,33.75 L356.25,29.25 L362.75,27.75Z M408.50,27.75 L416.50,29.00 L420.50,32.75 L418.00,34.00 L412.75,31.00 L406.25,31.00 L403.00,32.25 L399.00,35.75 L397.00,39.50 L397.25,48.25 L400.50,53.00 L406.00,56.00 L413.00,56.00 L418.00,53.00 L419.75,53.25 L420.25,55.50 L413.75,59.00 L404.25,58.75 L396.25,53.25 L393.25,46.00 L394.00,38.00 L396.75,33.25 L402.50,29.00 L408.50,28.00Z M440.00,27.75 L446.25,28.25 L451.75,31.00 L456.75,37.75 L457.75,43.25 L455.75,51.50 L448.50,58.00 L443.50,59.25 L437.00,59.00 L429.25,54.75 L425.00,46.25 L426.00,37.25 L432.25,30.00 L440.00,28.00Z M127.50,28.00 L145.00,28.00 L151.25,30.25 L153.75,33.50 L154.00,38.00 L150.75,43.00 L154.00,45.50 L155.50,49.00 L154.75,54.50 L150.50,58.00 L146.75,59.00 L127.50,59.00 L127.50,28.25Z M161.25,28.00 L177.00,28.00 L181.50,29.25 L185.75,32.50 L187.75,37.00 L187.75,41.50 L186.00,45.75 L182.00,49.00 L182.00,50.25 L188.00,58.25 L180.50,59.00 L174.50,50.50 L168.50,50.50 L168.00,58.75 L161.00,58.75 L161.25,28.25Z M203.25,28.00 L210.75,28.75 L223.75,57.75 L223.50,59.00 L216.25,58.75 L213.50,52.50 L199.75,52.50 L197.00,58.75 L189.50,58.50 L203.25,28.25Z M227.50,28.00 L233.00,28.00 L247.25,45.50 L248.25,45.50 L248.25,28.50 L255.75,28.75 L255.75,58.50 L249.50,59.00 L234.25,41.25 L234.25,58.50 L227.50,59.00 L227.50,28.25Z M263.25,28.00 L279.75,28.00 L284.75,29.25 L290.75,33.50 L294.00,40.50 L293.00,50.00 L286.50,57.00 L280.25,59.00 L263.25,59.00 L263.25,28.25Z M300.00,28.00 L306.75,28.50 L306.75,58.50 L299.75,59.00 L300.00,28.25Z M314.25,28.00 L319.75,28.00 L334.25,45.75 L335.00,28.50 L342.25,28.25 L342.00,59.00 L336.25,59.00 L321.75,41.00 L321.00,58.75 L314.00,58.75 L314.25,28.25Z M465.25,28.00 L479.00,28.00 L483.50,29.25 L487.00,32.00 L489.00,36.25 L487.75,44.25 L482.25,48.50 L488.75,59.00 L485.50,58.75 L478.50,49.00 L468.25,49.25 L468.00,58.75 L465.25,59.00 L465.25,28.25Z M497.25,28.00 L511.00,28.00 L515.50,29.25 L519.00,32.00 L521.00,36.25 L520.75,42.00 L517.25,47.00 L512.75,49.00 L500.50,49.25 L500.00,58.75 L497.25,59.00 L497.25,28.25Z M438.25,31.00 L431.25,35.00 L429.00,38.75 L428.25,44.75 L429.00,48.25 L432.25,53.00 L440.00,56.25 L447.50,55.00 L451.75,51.50 L454.00,46.75 L454.00,40.50 L452.00,36.00 L449.00,33.00 L444.50,31.00 L438.50,31.00Z M468.50,31.00 L468.50,46.25 L481.00,45.75 L484.75,42.75 L485.75,39.00 L485.00,35.00 L482.00,32.00 L468.75,31.00Z M500.50,31.00 L500.50,46.25 L512.75,45.75 L516.75,42.75 L517.75,39.00 L516.75,34.50 L514.00,32.00 L500.75,31.00Z M135.50,33.50 L134.25,34.25 L135.00,40.75 L143.00,40.75 L146.75,38.00 L144.75,34.00 L135.75,33.50Z M168.75,34.00 L168.75,44.75 L177.00,44.25 L180.25,41.00 L180.00,36.75 L178.50,35.00 L169.00,34.00Z M270.75,34.00 L270.25,53.00 L282.00,52.00 L285.00,49.50 L286.75,44.75 L286.00,39.25 L283.50,36.00 L278.75,34.00 L271.00,34.00Z M206.50,36.00 L202.00,46.00 L202.50,47.00 L211.00,46.75 L206.75,36.00Z M135.00,46.00 L135.00,53.50 L145.50,53.25 L148.25,50.50 L148.00,48.00 L145.50,46.25 L135.25,46.00Z" fill="#FFFFFF" fill-rule="evenodd"></path>
-</svg></a>
-    <ul class="footer-links">
-      <li><a href="#about">Nosotros</a></li>
-      <li><a href="#services">Servicios</a></li>
-      <li><a href="#contact">Contacto</a></li>
-      <li><a href="#">Privacidad</a></li>
-    </ul>
-    <span class="footer-copy">© 2024 BrandingCorp · Todos los derechos reservados</span>
-  </footer>
+<footer style="background:#070708;border-top:1px solid rgba(255,255,255,0.07);padding:64px 32px 36px;">
+  <div style="max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;">
+    <div>
+      <svg style="height:26px;width:auto;display:block;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 524 88" fill="none" aria-label="Branding Corp"><path d="M3.50,2.75 L48.00,3.00 L54.50,6.00 L59.75,11.75 L58.75,15.00 L53.75,21.75 L52.25,21.50 L48.50,16.25 L43.75,14.00 L15.00,14.25 L15.25,73.25 L43.25,73.50 L48.50,71.75 L54.00,66.00 L59.75,74.50 L58.75,77.75 L53.50,82.50 L47.25,84.75 L3.75,85.00 L3.50,3.00Z M73.25,2.75 L104.75,3.25 L104.50,32.75 L93.25,32.50 L92.75,14.00 L79.75,14.00 L58.75,43.25 L59.50,45.75 L79.75,73.50 L92.50,73.75 L93.50,55.50 L104.00,55.25 L104.50,84.75 L72.50,84.75 L47.75,50.00 L21.50,48.50 L21.50,38.50 L22.50,37.75 L45.00,37.75 L50.00,35.00 L73.25,3.00Z M362.75,27.50 L371.00,28.25 L376.00,31.00 L377.25,33.25 L373.25,37.00 L368.25,34.00 L359.50,35.00 L356.25,38.25 L355.00,41.75 L356.25,48.75 L360.75,52.75 L368.75,53.00 L370.50,51.50 L370.50,43.50 L376.75,43.00 L377.00,55.75 L367.50,59.50 L358.25,58.75 L351.00,53.75 L347.75,45.75 L348.00,39.25 L350.75,33.75 L356.25,29.25 L362.75,27.75Z M408.50,27.75 L416.50,29.00 L420.50,32.75 L418.00,34.00 L412.75,31.00 L406.25,31.00 L403.00,32.25 L399.00,35.75 L397.00,39.50 L397.25,48.25 L400.50,53.00 L406.00,56.00 L413.00,56.00 L418.00,53.00 L419.75,53.25 L420.25,55.50 L413.75,59.00 L404.25,58.75 L396.25,53.25 L393.25,46.00 L394.00,38.00 L396.75,33.25 L402.50,29.00 L408.50,28.00Z M440.00,27.75 L446.25,28.25 L451.75,31.00 L456.75,37.75 L457.75,43.25 L455.75,51.50 L448.50,58.00 L443.50,59.25 L437.00,59.00 L429.25,54.75 L425.00,46.25 L426.00,37.25 L432.25,30.00 L440.00,28.00Z M127.50,28.00 L145.00,28.00 L151.25,30.25 L153.75,33.50 L154.00,38.00 L150.75,43.00 L154.00,45.50 L155.50,49.00 L154.75,54.50 L150.50,58.00 L146.75,59.00 L127.50,59.00 L127.50,28.25Z M161.25,28.00 L177.00,28.00 L181.50,29.25 L185.75,32.50 L187.75,37.00 L187.75,41.50 L186.00,45.75 L182.00,49.00 L182.00,50.25 L188.00,58.25 L180.50,59.00 L174.50,50.50 L168.50,50.50 L168.00,58.75 L161.00,58.75 L161.25,28.25Z M203.25,28.00 L210.75,28.75 L223.75,57.75 L223.50,59.00 L216.25,58.75 L213.50,52.50 L199.75,52.50 L197.00,58.75 L189.50,58.50 L203.25,28.25Z M227.50,28.00 L233.00,28.00 L247.25,45.50 L248.25,45.50 L248.25,28.50 L255.75,28.75 L255.75,58.50 L249.50,59.00 L234.25,41.25 L234.25,58.50 L227.50,59.00 L227.50,28.25Z M263.25,28.00 L279.75,28.00 L284.75,29.25 L290.75,33.50 L294.00,40.50 L293.00,50.00 L286.50,57.00 L280.25,59.00 L263.25,59.00 L263.25,28.25Z M300.00,28.00 L306.75,28.50 L306.75,58.50 L299.75,59.00 L300.00,28.25Z M314.25,28.00 L319.75,28.00 L334.25,45.75 L335.00,28.50 L342.25,28.25 L342.00,59.00 L336.25,59.00 L321.75,41.00 L321.00,58.75 L314.00,58.75 L314.25,28.25Z M465.25,28.00 L479.00,28.00 L483.50,29.25 L487.00,32.00 L489.00,36.25 L487.75,44.25 L482.25,48.50 L488.75,59.00 L485.50,58.75 L478.50,49.00 L468.25,49.25 L468.00,58.75 L465.25,59.00 L465.25,28.25Z M497.25,28.00 L511.00,28.00 L515.50,29.25 L519.00,32.00 L521.00,36.25 L520.75,42.00 L517.25,47.00 L512.75,49.00 L500.50,49.25 L500.00,58.75 L497.25,59.00 L497.25,28.25Z M438.25,31.00 L431.25,35.00 L429.00,38.75 L428.25,44.75 L429.00,48.25 L432.25,53.00 L440.00,56.25 L447.50,55.00 L451.75,51.50 L454.00,46.75 L454.00,40.50 L452.00,36.00 L449.00,33.00 L444.50,31.00 L438.50,31.00Z M468.50,31.00 L468.50,46.25 L481.00,45.75 L484.75,42.75 L485.75,39.00 L485.00,35.00 L482.00,32.00 L468.75,31.00Z M500.50,31.00 L500.50,46.25 L512.75,45.75 L516.75,42.75 L517.75,39.00 L516.75,34.50 L514.00,32.00 L500.75,31.00Z M135.50,33.50 L134.25,34.25 L135.00,40.75 L143.00,40.75 L146.75,38.00 L144.75,34.00 L135.75,33.50Z M168.75,34.00 L168.75,44.75 L177.00,44.25 L180.25,41.00 L180.00,36.75 L178.50,35.00 L169.00,34.00Z M270.75,34.00 L270.25,53.00 L282.00,52.00 L285.00,49.50 L286.75,44.75 L286.00,39.25 L283.50,36.00 L278.75,34.00 L271.00,34.00Z M206.50,36.00 L202.00,46.00 L202.50,47.00 L211.00,46.75 L206.75,36.00Z M135.00,46.00 L135.00,53.50 L145.50,53.25 L148.25,50.50 L148.00,48.00 L145.50,46.25 L135.25,46.00Z" fill="#FFFFFF" fill-rule="evenodd"/></svg>
+      <p style="margin:22px 0 0;max-width:260px;font-size:14px;line-height:1.6;color:#7C7C80;font-weight:500;">Potenciamos tu gimnasio. Gestion, ventas y experiencia de marca, unificadas.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#5E5E62;margin-bottom:4px;">SERVICIOS</div>
+      <a href="#servicios" class="footer-link">Gestion integral</a>
+      <a href="#servicios" class="footer-link">Captacion de socios</a>
+      <a href="#servicios" class="footer-link">Experiencia de marca</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#5E5E62;margin-bottom:4px;">EMPRESA</div>
+      <a href="#nosotros" class="footer-link">Nosotros</a>
+      <a href="#proceso" class="footer-link">Proceso</a>
+      <a href="#contacto" class="footer-link">Contacto</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#5E5E62;margin-bottom:4px;">CONTACTO</div>
+      <a href="mailto:contacto@brandingcorp.es" class="footer-link">contacto@brandingcorp.es</a>
+    </div>
+  </div>
+  <div style="max-width:1240px;margin:48px auto 0;padding-top:26px;border-top:1px solid rgba(255,255,255,0.07);display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;">
+    <span style="font-size:13px;color:#5E5E62;font-weight:500;">2026 BrandingCorp. Todos los derechos reservados.</span>
+    <div style="display:flex;gap:24px;">
+      <a href="#" class="footer-social">INSTAGRAM</a>
+      <a href="#" class="footer-social">LINKEDIN</a>
+      <a href="#" class="footer-social">TIKTOK</a>
+    </div>
+  </div>
+</footer>
 
 </body>
 </html>
