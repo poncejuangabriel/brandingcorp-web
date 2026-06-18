@@ -99,6 +99,8 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 .store-footer a:hover{color:#fff;}
 .powered{font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:2px;font-weight:600;}
 .success-banner{display:none;background:var(--gold);color:#000;text-align:center;padding:14px;font-size:13px;font-weight:800;letter-spacing:1px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#fff;color:#000;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:14px 24px;border-radius:4px;z-index:400;opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 @media(max-width:600px){
   .nav{padding:14px 20px;}
@@ -135,6 +137,7 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 </header>
 
 <!-- CART SIDEBAR -->
+<div class="toast" id="toast"></div>
 <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
 <div class="cart-drawer" id="cartDrawer">
   <div class="cart-head">
@@ -333,8 +336,8 @@ function addToCart(productId) {
     setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+ AÑADIR'; }, 1400);
   }
 
-  // Abrir carrito brevemente
-  openCart();
+  // Toast discreto
+  showToast('✓ ' + product.name + ' añadido');
 }
 
 function removeFromCart(key) {
@@ -450,6 +453,15 @@ async function checkout() {
     btn.disabled = false;
     btn.textContent = 'FINALIZAR PEDIDO →';
   }
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
 init();
