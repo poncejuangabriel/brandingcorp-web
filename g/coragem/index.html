@@ -9,7 +9,7 @@
 <body style="margin:0;background:#000;">
 <script>
   window.GYM_CONFIG_PATH = 'config.json';
-  fetch('../_base/tienda.html')
+  fetch('../_base/tienda.html?v=' + Date.now())
     .then(r => r.text())
     .then(html => { document.open(); document.write(html); document.close(); });
 </script>
