@@ -1,0 +1,4 @@
+name = "brandingcorp-checkout"
+main = "index.js"
+compatibility_date = "2024-01-01"
+account_id = "a08415a4bac10c3fa4ebf67858accae3"
