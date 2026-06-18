@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title id="pageTitle">Tienda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style id="dynamicStyles">/* cargado desde config */</style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff;overflow-x:hidden;}
+::selection{background:var(--accent);color:var(--btn-text);}
+.nav{position:sticky;top:0;z-index:100;background:rgba(0,0,0,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.nav-logo{display:flex;align-items:center;gap:14px;text-decoration:none;}
+.nav-logo img{height:36px;width:36px;border-radius:50%;}
+.nav-logo-text strong{display:block;font-size:15px;font-weight:900;letter-spacing:2px;color:#fff;}
+.nav-logo-text span{display:block;font-size:10px;font-weight:600;letter-spacing:3px;color:var(--text-muted);}
+.cart-btn{display:flex;align-items:center;gap:10px;background:var(--btn-bg);color:var(--btn-text);border:none;cursor:pointer;font-family:Montserrat,sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;padding:11px 22px;border-radius:2px;transition:opacity .15s;}
+.cart-btn:hover{opacity:.85;}
+.hero{position:relative;padding:80px 32px 70px;overflow:hidden;border-bottom:1px solid var(--border);}
+.hero::before{content:'';position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(0.18) grayscale(1);}
+.hero-inner{position:relative;max-width:1200px;margin:0 auto;}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:4px;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.hero-label::before{content:'';display:block;width:28px;height:1px;background:var(--gold);}
+.hero h1{font-size:clamp(42px,7vw,96px);font-weight:900;line-height:.92;letter-spacing:-.02em;text-transform:uppercase;color:#fff;max-width:800px;}
+.hero h1 em{font-style:normal;color:var(--gold);}
+.hero-sub{margin-top:24px;font-size:16px;font-weight:500;color:rgba(255,255,255,0.5);max-width:480px;line-height:1.6;}
+.hero-meta{display:flex;gap:32px;margin-top:36px;flex-wrap:wrap;}
+.hero-meta span{font-size:11px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,0.35);}
+.filters{max-width:1200px;margin:0 auto;padding:32px 32px 0;display:flex;flex-wrap:wrap;gap:10px;}
+.filter-btn{font-family:Montserrat,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;padding:9px 18px;border:1px solid var(--border);border-radius:2px;background:transparent;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.filter-btn:hover,.filter-btn.active{background:var(--btn-bg);color:var(--btn-text);border-color:var(--btn-bg);}
+.products-grid{max-width:1200px;margin:32px auto 0;padding:0 32px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.product-card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .18s,transform .18s;}
+.product-card:hover{border-color:rgba(255,255,255,0.3);transform:translateY(-3px);}
+.product-img{aspect-ratio:1/1;background:var(--bg3);display:flex;align-items:center;justify-content:center;position:relative;}
+.product-img .ph-inner{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.15);}
+.product-img .ph-inner span.lbl{font-size:10px;letter-spacing:2px;font-weight:600;}
+.product-badge{position:absolute;top:12px;left:12px;background:var(--gold);color:#000;font-size:9px;font-weight:900;letter-spacing:2px;padding:4px 10px;border-radius:2px;}
+.product-info{padding:20px;flex:1;display:flex;flex-direction:column;gap:10px;}
+.product-name{font-size:15px;font-weight:800;color:#fff;line-height:1.2;}
+.product-desc{font-size:12px;color:var(--text-muted);line-height:1.55;font-weight:500;}
+.product-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:16px;}
+.product-price{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.5px;}
+.product-price small{font-size:13px;font-weight:600;color:var(--text-muted);}
+.buy-btn{font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1.5px;background:var(--btn-bg);color:var(--btn-text);border:none;cursor:pointer;padding:10px 16px;border-radius:2px;transition:opacity .15s;white-space:nowrap;text-decoration:none;display:inline-block;}
+.buy-btn:hover{opacity:.8;}
+.size-selector{display:flex;gap:6px;flex-wrap:wrap;}
+.size-opt{font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 10px;border:1px solid var(--border);border-radius:2px;cursor:pointer;color:var(--text-muted);background:transparent;font-family:Montserrat,sans-serif;transition:all .1s;}
+.size-opt:hover,.size-opt.selected{background:var(--btn-bg);color:var(--btn-text);border-color:var(--btn-bg);}
+.store-footer{max-width:1200px;margin:80px auto 0;padding:32px 32px 48px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center;}
+.store-footer a{color:var(--text-muted);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:1px;}
+.store-footer a:hover{color:#fff;}
+.powered{font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:2px;font-weight:600;}
+.success-banner{display:none;background:var(--gold);color:#000;text-align:center;padding:14px;font-size:13px;font-weight:800;letter-spacing:1px;}
+@media(max-width:600px){
+  .nav{padding:14px 20px;}
+  .hero{padding:60px 20px 50px;}
+  .filters{padding:24px 20px 0;}
+  .products-grid{padding:0 20px;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .product-info{padding:14px;}
+  .product-name{font-size:13px;}
+  .product-price{font-size:18px;}
+  .buy-btn{font-size:10px;padding:8px 12px;}
+}
+</style>
+</head>
+<body>
+
+<div class="success-banner" id="successBanner">
+  ¡Pedido recibido! Recibirás la confirmación por email. Gracias por tu compra.
+</div>
+
+<header class="nav">
+  <a id="navLogo" class="nav-logo" href="#" target="_blank">
+    <img id="navLogoImg" src="" alt="">
+    <div class="nav-logo-text">
+      <strong id="navName"></strong>
+      <span id="navTagline"></span>
+    </div>
+  </a>
+  <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text-muted);">TIENDA OFICIAL</div>
+</header>
+
+<section class="hero" id="heroSection">
+  <div class="hero-inner">
+    <div class="hero-label">TIENDA OFICIAL</div>
+    <h1 id="heroTitle"></h1>
+    <p class="hero-sub" id="heroDesc"></p>
+    <div class="hero-meta" id="heroMeta"></div>
+  </div>
+</section>
+
+<div class="filters" id="filtersContainer"></div>
+<div class="products-grid" id="productsGrid"></div>
+
+<footer class="store-footer">
+  <div id="footerLinks"></div>
+  <span class="powered">POWERED BY BRANDINGCORP</span>
+</footer>
+
+<script>
+// ── Cargar config desde el mismo directorio ──────────────────
+async function init() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('pedido') === 'ok') {
+    document.getElementById('successBanner').style.display = 'block';
+  }
+
+  // Ruta al config.json (mismo nivel que index.html que cargó este template)
+  const configPath = window.GYM_CONFIG_PATH || '../config.json';
+  const resp = await fetch(configPath);
+  const C = await resp.json();
+  buildPage(C);
+}
+
+function buildPage(C) {
+  const g = C.gym;
+  const b = C.brand;
+
+  // ── CSS variables ────────────────────────────────────────
+  document.getElementById('dynamicStyles').textContent = `
+    :root {
+      --accent: ${b.accent};
+      --accent-dim: ${b.accent_dim};
+      --gold: ${b.gold};
+      --bg: ${b.bg};
+      --bg2: ${b.bg2};
+      --bg3: ${b.bg3};
+      --border: ${b.border};
+      --text-muted: ${b.text_muted};
+      --btn-bg: ${b.btn_bg};
+      --btn-text: ${b.btn_text};
+    }
+  `;
+
+  // ── Meta ────────────────────────────────────────────────
+  document.getElementById('pageTitle').textContent = g.name + ' Store';
+
+  // ── Nav ─────────────────────────────────────────────────
+  document.getElementById('navLogo').href = g.web;
+  const logoImg = document.getElementById('navLogoImg');
+  logoImg.src = g.logo_url;
+  logoImg.alt = g.name;
+  if (g.logo_filter) logoImg.style.filter = g.logo_filter;
+  document.getElementById('navName').textContent = g.name.toUpperCase();
+  document.getElementById('navTagline').textContent = g.tagline.toUpperCase();
+
+  // ── Hero ────────────────────────────────────────────────
+  const hero = document.getElementById('heroSection');
+  hero.style.background = `linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)), url('${g.hero_bg}') center/cover no-repeat`;
+  document.getElementById('heroTitle').innerHTML = g.name + '<br><em>Store</em>';
+  document.getElementById('heroDesc').textContent = g.description;
+  const metaEl = document.getElementById('heroMeta');
+  g.meta.forEach((m, i) => {
+    metaEl.insertAdjacentHTML('beforeend',
+      `<span>${m}</span>${i < g.meta.length-1 ? '<span style="opacity:.3">·</span>' : ''}`);
+  });
+
+  // ── Footer ───────────────────────────────────────────────
+  document.getElementById('footerLinks').innerHTML =
+    `<a href="${g.web}" target="_blank">${g.web.replace('https://','')}</a>
+     &nbsp;·&nbsp;
+     <a href="https://instagram.com/${g.instagram}" target="_blank">@${g.instagram}</a>`;
+
+  // ── Categorías únicas para filtros ───────────────────────
+  const cats = ['all', ...new Set(C.products.map(p => p.category))];
+  const catLabels = { all:'TODO', ropa:'ROPA', accesorios:'ACCESORIOS', equipamiento:'EQUIPAMIENTO' };
+  const filtersEl = document.getElementById('filtersContainer');
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (cat==='all' ? ' active' : '');
+    btn.textContent = catLabels[cat] || cat.toUpperCase();
+    btn.onclick = () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts(C.products, cat);
+    };
+    filtersEl.appendChild(btn);
+  });
+
+  renderProducts(C.products, 'all');
+}
+
+function renderProducts(products, filter) {
+  const grid = document.getElementById('productsGrid');
+  const list = filter === 'all' ? products : products.filter(p => p.category === filter);
+  grid.innerHTML = list.map(p => `
+    <div class="product-card">
+      <div class="product-img">
+        <div class="ph-inner">
+          <span style="font-size:52px;line-height:1;">${p.emoji}</span>
+          <span class="lbl">FOTO PRÓXIMAMENTE</span>
+        </div>
+        ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        ${p.sizes.length > 1 ? `
+        <div class="size-selector" id="sz-${p.id}">
+          ${p.sizes.map((s,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectSz('${p.id}','${s}',this)">${s}</button>`).join('')}
+        </div>` : `<div id="sz-${p.id}" data-selected="${p.sizes[0]}" style="display:none;"></div>`}
+        <div class="product-footer">
+          <div class="product-price">${p.price.toFixed(2).replace('.',',')} <small>€</small></div>
+          ${p.stripe
+            ? `<a class="buy-btn" href="${p.stripe}" target="_blank">COMPRAR →</a>`
+            : `<span style="font-size:11px;color:var(--text-muted);letter-spacing:1px;">PRÓXIMAMENTE</span>`}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectSz(id, size, btn) {
+  const el = document.getElementById('sz-' + id);
+  el.dataset.selected = size;
+  el.querySelectorAll('.size-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+init();
+</script>
+</body>
+</html>

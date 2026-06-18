@@ -1,0 +1,87 @@
+{
+  "gym": {
+    "id": "nombre-del-gym",
+    "name": "Nombre Gym",
+    "tagline": "Ciudad · Disciplina",
+    "description": "Frase que describe el gym y su espíritu.",
+    "logo_url": "URL de la imagen del logo",
+    "logo_filter": "",
+    "hero_bg": "URL de foto de fondo (acción, equipo, sala)",
+    "web": "https://web-del-gym.com",
+    "instagram": "usuario_instagram",
+    "whatsapp": "34600000000",
+    "location": "Ciudad",
+    "meta": ["CIUDAD", "DISCIPLINA", "AÑO FUNDACIÓN"]
+  },
+  "brand": {
+    "accent": "#FFFFFF",
+    "accent_dim": "rgba(255,255,255,0.12)",
+    "gold": "#C9962A",
+    "bg": "#0A0A0A",
+    "bg2": "#111111",
+    "bg3": "#181818",
+    "border": "rgba(255,255,255,0.1)",
+    "text_muted": "#777777",
+    "btn_bg": "#FFFFFF",
+    "btn_text": "#000000"
+  },
+  "shipping_note": "Pago seguro vía Stripe · Envío a toda España",
+  "return_url": "https://brandingcorp.es/g/nombre-del-gym/?pedido=ok",
+  "products": [
+    {
+      "id": "camiseta",
+      "name": "Camiseta Nombre Gym",
+      "desc": "100% algodón 220g con diseño del equipo.",
+      "price": 32,
+      "category": "ropa",
+      "badge": null,
+      "emoji": "👕",
+      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
+      "stripe": ""
+    },
+    {
+      "id": "hoodie",
+      "name": "Hoodie Nombre Gym",
+      "desc": "Sudadera con capucha 340g, logo bordado.",
+      "price": 58,
+      "category": "ropa",
+      "badge": "BESTSELLER",
+      "emoji": "🧥",
+      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
+      "stripe": ""
+    },
+    {
+      "id": "gorra",
+      "name": "Gorra Nombre Gym",
+      "desc": "Gorra 5 paneles ajustable con bordado del monograma.",
+      "price": 28,
+      "category": "ropa",
+      "badge": null,
+      "emoji": "🧢",
+      "sizes": ["ÚNICA"],
+      "stripe": ""
+    },
+    {
+      "id": "botella",
+      "name": "Botella Aluminio",
+      "desc": "Botella 750ml grabada a laser con logo del gym.",
+      "price": 38,
+      "category": "accesorios",
+      "badge": null,
+      "emoji": "🧴",
+      "sizes": ["ÚNICA"],
+      "stripe": ""
+    },
+    {
+      "id": "llavero",
+      "name": "Llavero",
+      "desc": "Llavero metálico grabado a laser.",
+      "price": 9,
+      "category": "accesorios",
+      "badge": null,
+      "emoji": "🗝️",
+      "sizes": ["ÚNICA"],
+      "stripe": ""
+    }
+  ]
+}
