@@ -378,7 +378,7 @@ const PRODUCTS = [
     badge: null,
     emoji: '👕',
     sizes: ['XS','S','M','L','XL','XXL'],
-    // stripe: 'https://buy.stripe.com/XXXXXXXX'  ← añadir cuando esté listo
+    stripe: 'https://buy.stripe.com/test_dRm5kEgao3aB1QX4GbafS00',
   },
   {
     id: 'hoodie',
@@ -389,6 +389,7 @@ const PRODUCTS = [
     badge: 'BESTSELLER',
     emoji: '🧥',
     sizes: ['XS','S','M','L','XL','XXL'],
+    stripe: 'https://buy.stripe.com/test_5kQ5kE8HWfXnfHNfkPafS01',
   },
   {
     id: 'chanclas',
@@ -399,6 +400,7 @@ const PRODUCTS = [
     badge: null,
     emoji: '🩴',
     sizes: ['38','39','40','41','42','43','44','45'],
+    stripe: 'https://buy.stripe.com/test_14A8wQ7DS12tantdcHafS02',
   },
   {
     id: 'gorra',
@@ -409,26 +411,29 @@ const PRODUCTS = [
     badge: null,
     emoji: '🧢',
     sizes: ['ÚNICA'],
+    stripe: 'https://buy.stripe.com/test_14AeVe6zO6mN67dc8DafS03',
   },
   {
     id: 'calcetines',
-    name: 'Calcetines Coragem',
+    name: 'Calcetines Coragem (pack 2)',
     desc: 'Pack 2 pares. Algodón con elastano. Sublimación total con el diseño del equipo.',
     price: 12,
     category: 'ropa',
     badge: null,
     emoji: '🧦',
     sizes: ['36-39','40-43','44-46'],
+    stripe: 'https://buy.stripe.com/test_4gM5kE0bqdPf539egLafS04',
   },
   {
     id: 'botella',
-    name: 'Botella Aluminio',
+    name: 'Botella Aluminio Coragem',
     desc: 'Botella negra 750ml grabada a laser con el escudo Coragem. Tapa a rosca hermética.',
     price: 38,
     category: 'accesorios',
     badge: 'EDICIÓN LIMITADA',
     emoji: '🧴',
     sizes: ['ÚNICA'],
+    stripe: 'https://buy.stripe.com/test_28E8wQe2g4eF67dfkPafS05',
   },
   {
     id: 'llavero',
@@ -439,6 +444,7 @@ const PRODUCTS = [
     badge: null,
     emoji: '🗝️',
     sizes: ['ÚNICA'],
+    stripe: 'https://buy.stripe.com/test_14AeVe3nC9yZ8fl1tZafS06',
   },
   {
     id: 'porta-medalla',
@@ -449,6 +455,7 @@ const PRODUCTS = [
     badge: null,
     emoji: '🏅',
     sizes: ['ÚNICA'],
+    stripe: 'https://buy.stripe.com/test_14A5kEe2g26xbrxb4zafS07',
   },
   {
     id: 'placa-aluminio',
@@ -459,16 +466,18 @@ const PRODUCTS = [
     badge: null,
     emoji: '🪙',
     sizes: ['20x30cm','30x40cm'],
+    stripe: 'https://buy.stripe.com/test_bJe5kE4rG5iJ0MT5KfafS08',
   },
   {
     id: 'stripes-dtf',
-    name: 'Stripes DTF Cinturón',
+    name: 'Stripes DTF Cinturón (pack 3)',
     desc: 'Pack 3 stripes en DTF para estampar en tu cinturón. Logo Coragem en blanco. Resistente al lavado.',
     price: 9,
     category: 'equipamiento',
     badge: null,
     emoji: '🥋',
     sizes: ['PACK 3'],
+    stripe: 'https://buy.stripe.com/test_00wcN63nC9yZ0MT6OjafS09',
   },
 ];
 
@@ -500,7 +509,7 @@ function renderProducts(filter){
         </div>` : `<div style="display:none;" id="sizes-${p.id}" data-selected="${p.sizes[0]}"></div>`}
         <div class="product-footer">
           <div class="product-price">${p.price.toFixed(2).replace('.',',')} <small>€</small></div>
-          <button class="add-btn" id="add-${p.id}" onclick="addToCart('${p.id}')">+ AÑADIR</button>
+          <button class="add-btn" id="add-${p.id}" onclick="buyNow('${p.id}')">COMPRAR</button>
         </div>
       </div>
     </div>
@@ -596,15 +605,14 @@ function closeCart(){
 }
 function closeCartOnOverlay(e){ if(e.target===document.getElementById('cartOverlay')) closeCart(); }
 
-// ── Checkout vía WhatsApp (hasta que Stripe esté configurado) ──
-function checkout(){
-  if(cart.length === 0) return;
-  const lines = cart.map(x => `• ${x.name}${x.size && x.size!=='ÚNICA' ? ' ('+x.size+')' : ''} ×${x.qty} — ${(x.price*x.qty).toFixed(2).replace('.',',')}€`).join('\n');
-  const total = cart.reduce((s,x)=>s+x.price*x.qty,0).toFixed(2).replace('.',',');
-  const msg = encodeURIComponent(`¡Hola! Quiero hacer un pedido de la tienda Coragem:\n\n${lines}\n\nTOTAL: ${total}€\n\n¿Cómo procedo con el pago?`);
-  // Número Coragem: +34 935 063 622
-  window.open('https://wa.me/34935063622?text=' + msg, '_blank');
+// ── Compra directa vía Stripe Payment Link ──
+function buyNow(productId){
+  const p = PRODUCTS.find(x => x.id === productId);
+  if(!p || !p.stripe) return;
+  window.open(p.stripe, '_blank');
 }
+
+function checkout(){ /* reservado para carrito multi-producto */ }
 
 // ── Toast ───────────────────────────────────────────────────
 function showToast(msg){
