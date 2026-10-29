@@ -234,7 +234,8 @@ async function init() {
   // El carrito guardado puede tener precios antiguos: se actualizan con el catálogo actual
   cart = cart.flatMap(i => {
     const p = C.products.find(x => x.id === i.id);
-    return p ? [{ ...i, name: p.name, price: p.price, emoji: p.emoji }] : [];
+    // Se descartan también artículos con una talla que ya no existe (o guardados sin talla)
+    return p && p.sizes.includes(i.size) ? [{ ...i, name: p.name, price: p.price, emoji: p.emoji }] : [];
   });
   saveCart();
   renderCart();
@@ -334,7 +335,7 @@ function renderProducts(products, filter) {
         <div class="product-name">${p.name}</div>
         <div class="product-desc">${p.desc}</div>
         ${hasSizes ? `
-        <div class="size-selector" id="sz-${p.id}">
+        <div class="size-selector" id="sz-${p.id}" data-selected="${p.sizes[0]}">
           ${p.sizes.map((s,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectSz('${p.id}','${s}',this)">${s}</button>`).join('')}
         </div>` : `<div id="sz-${p.id}" data-selected="${p.sizes ? p.sizes[0] : 'ÚNICA'}" style="display:none;"></div>`}
         <div class="product-footer">
