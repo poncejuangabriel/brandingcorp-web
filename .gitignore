@@ -1,0 +1,13 @@
+# Archivos locales de Claude Code (config/memoria, no es parte de la web)
+.claude/
+
+# Proyecto aparte con su propio repo de git
+telegram-bot-cowork/
+
+# Zips y archivos temporales de subida manual
+*.zip
+zi5oC21n
+
+# Secretos y entornos locales
+.env
+.env.*

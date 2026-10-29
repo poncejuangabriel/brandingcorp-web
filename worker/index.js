@@ -44,6 +44,7 @@ export default {
       body.append('success_url', success_url || 'https://brandingcorp.es/g/' + gym_id + '/?pedido=ok');
       body.append('cancel_url', cancel_url || 'https://brandingcorp.es/g/' + gym_id + '/');
       body.append('locale', 'es');
+      body.append('metadata[gym_id]', gym_id || 'desconocido');
 
       line_items.forEach((item, i) => {
         body.append(`line_items[${i}][price_data][currency]`, item.price_data.currency);
