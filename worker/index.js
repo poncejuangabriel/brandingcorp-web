@@ -46,6 +46,11 @@ export default {
       body.append('locale', 'es');
       body.append('metadata[gym_id]', gym_id || 'desconocido');
 
+      // Datos de facturación: Stripe los pide en la propia página de pago
+      body.append('billing_address_collection', 'required');
+      body.append('phone_number_collection[enabled]', 'true');
+      body.append('tax_id_collection[enabled]', 'true'); // NIF/CIF opcional para empresas
+
       line_items.forEach((item, i) => {
         body.append(`line_items[${i}][price_data][currency]`, item.price_data.currency);
         body.append(`line_items[${i}][price_data][unit_amount]`, item.price_data.unit_amount);
