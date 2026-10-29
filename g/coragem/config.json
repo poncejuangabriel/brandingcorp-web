@@ -145,17 +145,34 @@
       ]
     },
     {
-      "id": "botella",
-      "name": "Botella Aluminio Coragem",
-      "desc": "Botella negra 750ml grabada a laser con el escudo Coragem. Tapa a rosca hermética.",
-      "price": 38,
+      "id": "taza",
+      "name": "Taza Coragem",
+      "desc": "Taza de cerámica negra brillante con el logo Coragem en blanco.",
+      "price": 15,
       "category": "accesorios",
-      "badge": "EDICIÓN LIMITADA",
+      "badge": null,
+      "emoji": "☕",
+      "sizes": [
+        "ÚNICA"
+      ],
+      "images": [
+        "img/taza.webp"
+      ]
+    },
+    {
+      "id": "termo",
+      "name": "Termo Coragem",
+      "desc": "Botella térmica negra con asa y tapa a rosca. Logo y nombre Coragem Jiu-Jitsu en blanco.",
+      "price": 15,
+      "category": "accesorios",
+      "badge": null,
       "emoji": "🧴",
       "sizes": [
         "ÚNICA"
       ],
-      "stripe": "https://buy.stripe.com/test_28E8wQe2g4eF67dfkPafS05"
+      "images": [
+        "img/termo.webp"
+      ]
     },
     {
       "id": "llavero",
@@ -184,18 +201,34 @@
       "stripe": "https://buy.stripe.com/test_14A5kEe2g26xbrxb4zafS07"
     },
     {
-      "id": "placa-aluminio",
-      "name": "Placa Aluminio Sublimable",
-      "desc": "Placa de aluminio 20x30cm sublimable. Personalizable con nombre y fecha.",
-      "price": 22,
+      "id": "placa-a4",
+      "name": "Placa Sublimada A4",
+      "desc": "Placa de aluminio tamaño A4 (21x29,7cm) con tu foto de competición sublimada. Colores vivos y acabado brillante. Tras la compra te pedimos la foto.",
+      "price": 20,
       "category": "accesorios",
       "badge": null,
-      "emoji": "🪙",
+      "emoji": "🖼️",
       "sizes": [
-        "20x30cm",
-        "30x40cm"
+        "A4"
       ],
-      "stripe": "https://buy.stripe.com/test_bJe5kE4rG5iJ0MT5KfafS08"
+      "images": [
+        "img/placa-sublimada.webp"
+      ]
+    },
+    {
+      "id": "placa-a3",
+      "name": "Placa Sublimada A3",
+      "desc": "Placa de aluminio tamaño A3 (29,7x42cm) con tu foto de competición sublimada. Colores vivos y acabado brillante. Tras la compra te pedimos la foto.",
+      "price": 30,
+      "category": "accesorios",
+      "badge": null,
+      "emoji": "🖼️",
+      "sizes": [
+        "A3"
+      ],
+      "images": [
+        "img/placa-sublimada.webp"
+      ]
     },
     {
       "id": "stripes-dtf",
