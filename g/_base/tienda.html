@@ -242,7 +242,15 @@ function buildPage(C) {
   document.getElementById('footerLinks').innerHTML =
     `<a href="${g.web}" target="_blank">${g.web.replace('https://','')}</a>
      &nbsp;·&nbsp;
-     <a href="https://instagram.com/${g.instagram}" target="_blank">@${g.instagram}</a>`;
+     <a href="https://instagram.com/${g.instagram}" target="_blank">@${g.instagram}</a>
+     <br><br>
+     <a href="mailto:contacto@brandingcorp.es">CONTACTO</a>
+     &nbsp;·&nbsp;
+     <a href="/legal/condiciones-venta.html" target="_blank">ENVÍOS Y DEVOLUCIONES</a>
+     &nbsp;·&nbsp;
+     <a href="/legal/privacidad.html" target="_blank">PRIVACIDAD</a>
+     &nbsp;·&nbsp;
+     <a href="/legal/aviso-legal.html" target="_blank">AVISO LEGAL</a>`;
 
   const cats = ['all', ...new Set(C.products.map(p => p.category))];
   const catLabels = { all:'TODO', ropa:'ROPA', accesorios:'ACCESORIOS', equipamiento:'EQUIPAMIENTO' };
