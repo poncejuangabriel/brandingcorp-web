@@ -23,20 +23,35 @@ export default {
         return new Response(JSON.stringify({ error: 'Carrito vacío' }), { status: 400, headers });
       }
 
-      // Crear líneas de pedido para Stripe
-      const line_items = items.map(item => ({
-        price_data: {
-          currency: 'eur',
-          product_data: {
-            name: item.name,
-            description: item.size && item.size !== 'ÚNICA' && item.size !== 'PACK 3'
-              ? `Talla: ${item.size}`
-              : undefined,
+      // Los precios se leen del catálogo publicado, nunca del navegador del cliente
+      if (!/^[a-z0-9-]+$/.test(gym_id || '')) {
+        return new Response(JSON.stringify({ error: 'Tienda no válida' }), { status: 400, headers });
+      }
+      const configRes = await fetch(`https://brandingcorp.es/g/${gym_id}/config.json?v=${Date.now()}`, { cf: { cacheTtl: 0 } });
+      if (!configRes.ok) {
+        return new Response(JSON.stringify({ error: 'Tienda no encontrada' }), { status: 400, headers });
+      }
+      const catalog = (await configRes.json()).products;
+
+      const line_items = [];
+      for (const item of items) {
+        const product = catalog.find(p => p.id === item.id);
+        const qty = Number(item.qty);
+        if (!product || !Number.isInteger(qty) || qty < 1 || qty > 50 || !product.sizes.includes(item.size)) {
+          return new Response(JSON.stringify({ error: 'El carrito ha cambiado. Recarga la página e inténtalo de nuevo.' }), { status: 400, headers });
+        }
+        line_items.push({
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: product.name,
+              description: product.sizes.length > 1 ? `Talla: ${item.size}` : undefined,
+            },
+            unit_amount: Math.round(product.price * 100), // céntimos
           },
-          unit_amount: Math.round(item.price * 100), // céntimos
-        },
-        quantity: item.qty,
-      }));
+          quantity: qty,
+        });
+      }
 
       // Crear sesión de Stripe Checkout
       const body = new URLSearchParams();

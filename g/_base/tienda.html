@@ -50,6 +50,10 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 .product-img img.loaded{display:block;}
 .ph-inner{display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.15);}
 .ph-inner span.lbl{font-size:10px;letter-spacing:2px;font-weight:600;}
+.product-img.has-photo{cursor:zoom-in;}
+.product-img.has-photo img{transition:transform .3s;}
+.product-card:hover .product-img.has-photo img{transform:scale(1.04);}
+.photo-count{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.65);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;padding:4px 8px;border-radius:2px;pointer-events:none;}
 .product-badge{position:absolute;top:12px;left:12px;background:var(--gold);color:#000;font-size:9px;font-weight:900;letter-spacing:2px;padding:4px 10px;border-radius:2px;}
 .product-info{padding:20px;flex:1;display:flex;flex-direction:column;gap:10px;}
 .product-name{font-size:15px;font-weight:800;color:#fff;line-height:1.2;}
@@ -76,6 +80,21 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 .cart-empty{padding:60px 24px;text-align:center;color:var(--text-muted);font-size:13px;font-weight:600;letter-spacing:1px;}
 .cart-item{display:flex;gap:14px;padding:18px 24px;border-bottom:1px solid var(--border);align-items:center;}
 .cart-item-emoji{font-size:32px;width:48px;text-align:center;flex-shrink:0;}
+.cart-item-thumb{width:48px;height:48px;object-fit:cover;border-radius:2px;flex-shrink:0;}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.94);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:56px 16px 24px;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:min(90vw,900px);max-height:calc(100vh - 140px);object-fit:contain;border-radius:2px;user-select:none;-webkit-user-drag:none;}
+.lb-title{font-size:12px;font-weight:800;letter-spacing:2px;color:#fff;text-transform:uppercase;text-align:center;}
+.lb-close{position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:34px;line-height:1;cursor:pointer;padding:4px 10px;}
+.lb-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.5);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.lb-arrow:hover{background:#fff;color:#000;}
+.lb-prev{left:16px;}
+.lb-next{right:16px;}
+.lb-dots{display:flex;gap:8px;}
+.lb-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.3);border:none;cursor:pointer;padding:0;}
+.lb-dot.active{background:#fff;}
 .cart-item-info{flex:1;min-width:0;}
 .cart-item-name{font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .cart-item-size{font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:2px;}
@@ -112,6 +131,9 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
   .product-price{font-size:18px;}
   .add-btn{font-size:10px;padding:8px 12px;}
   .cart-drawer{width:100vw;}
+  .lb-arrow{width:40px;height:40px;font-size:18px;}
+  .lb-prev{left:8px;}
+  .lb-next{right:8px;}
 }
 </style>
 </head>
@@ -166,6 +188,16 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
   </div>
 </section>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()" aria-label="Cerrar">×</button>
+  <button class="lb-arrow lb-prev" id="lbPrev" onclick="lbStep(-1)" aria-label="Foto anterior">‹</button>
+  <img id="lbImg" src="" alt="">
+  <button class="lb-arrow lb-next" id="lbNext" onclick="lbStep(1)" aria-label="Foto siguiente">›</button>
+  <div class="lb-title" id="lbTitle"></div>
+  <div class="lb-dots" id="lbDots"></div>
+</div>
+
 <div class="filters" id="filtersContainer"></div>
 <div class="products-grid" id="productsGrid"></div>
 
@@ -198,6 +230,13 @@ async function init() {
   if (saved) { try { cart = JSON.parse(saved); } catch(e) { cart = []; } }
 
   buildPage(C);
+
+  // El carrito guardado puede tener precios antiguos: se actualizan con el catálogo actual
+  cart = cart.flatMap(i => {
+    const p = C.products.find(x => x.id === i.id);
+    return p ? [{ ...i, name: p.name, price: p.price, emoji: p.emoji }] : [];
+  });
+  saveCart();
   renderCart();
 }
 
@@ -276,11 +315,10 @@ function renderProducts(products, filter) {
   const list = filter === 'all' ? products : products.filter(p => p.category === filter);
   grid.innerHTML = list.map(p => {
     const hasSizes = p.sizes && p.sizes.length > 1;
-    const imgHtml = p.image_url
-      ? `<img src="${p.image_url}" alt="${p.name}" onload="this.classList.add('loaded')" onerror="this.style.display='none'">
-         <div class="ph-inner" style="position:absolute;">
-           <span style="font-size:52px;line-height:1;">${p.emoji}</span>
-         </div>`
+    const imgs = productImages(p);
+    const imgHtml = imgs.length
+      ? `<img src="${imgs[0]}" alt="${p.name}" loading="lazy" class="loaded">
+         ${imgs.length > 1 ? `<span class="photo-count">1/${imgs.length}</span>` : ''}`
       : `<div class="ph-inner">
            <span style="font-size:52px;line-height:1;">${p.emoji}</span>
            <span class="lbl">FOTO PRÓXIMAMENTE</span>
@@ -288,7 +326,7 @@ function renderProducts(products, filter) {
 
     return `
     <div class="product-card" id="card-${p.id}">
-      <div class="product-img">
+      <div class="product-img${imgs.length ? ' has-photo' : ''}"${imgs.length ? ` onclick="openLightbox('${p.id}')"` : ''}>
         ${imgHtml}
         ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
       </div>
@@ -307,6 +345,61 @@ function renderProducts(products, filter) {
     </div>`;
   }).join('');
 }
+
+function productImages(p) {
+  return p.images || (p.image_url ? [p.image_url] : []);
+}
+
+// ── Galería ampliada ────────────────────────────────────────
+let lb = { imgs: [], i: 0 };
+
+function openLightbox(productId) {
+  const p = window._products.find(x => x.id === productId);
+  lb = { imgs: productImages(p), i: 0 };
+  document.getElementById('lbTitle').textContent = p.name;
+  document.getElementById('lbImg').alt = p.name;
+  const multi = lb.imgs.length > 1;
+  document.getElementById('lbPrev').style.display = multi ? '' : 'none';
+  document.getElementById('lbNext').style.display = multi ? '' : 'none';
+  document.getElementById('lbDots').innerHTML = multi
+    ? lb.imgs.map((_, i) => `<button class="lb-dot" onclick="lbGo(${i})" aria-label="Foto ${i+1}"></button>`).join('')
+    : '';
+  lbGo(0);
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function lbGo(i) {
+  lb.i = (i + lb.imgs.length) % lb.imgs.length;
+  document.getElementById('lbImg').src = lb.imgs[lb.i];
+  document.querySelectorAll('.lb-dot').forEach((d, j) => d.classList.toggle('active', j === lb.i));
+}
+
+function lbStep(d) { lbGo(lb.i + d); }
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lbStep(-1);
+  if (e.key === 'ArrowRight') lbStep(1);
+});
+
+// Deslizar con el dedo en el móvil
+let lbTouchX = null;
+document.addEventListener('touchstart', e => {
+  if (e.target.id === 'lbImg') lbTouchX = e.touches[0].clientX;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  if (lbTouchX === null) return;
+  const dx = e.changedTouches[0].clientX - lbTouchX;
+  lbTouchX = null;
+  if (Math.abs(dx) > 40 && lb.imgs.length > 1) lbStep(dx < 0 ? 1 : -1);
+});
 
 function selectSz(id, size, btn) {
   const el = document.getElementById('sz-' + id);
@@ -390,9 +483,12 @@ function renderCart() {
   footEl.style.display = 'block';
   document.getElementById('cartTotal').textContent = total.toFixed(2).replace('.', ',') + ' €';
 
-  itemsEl.innerHTML = cart.map(item => `
+  itemsEl.innerHTML = cart.map(item => {
+    const p = (window._products || []).find(x => x.id === item.id);
+    const thumb = p && productImages(p)[0];
+    return `
     <div class="cart-item">
-      <div class="cart-item-emoji">${item.emoji}</div>
+      ${thumb ? `<img class="cart-item-thumb" src="${thumb}" alt="">` : `<div class="cart-item-emoji">${item.emoji}</div>`}
       <div class="cart-item-info">
         <div class="cart-item-name">${item.name}</div>
         ${item.size && item.size !== 'ÚNICA' ? `<div class="cart-item-size">TALLA: ${item.size}</div>` : ''}
@@ -403,8 +499,8 @@ function renderCart() {
         <span class="qty-num">${item.qty}</span>
         <button class="qty-btn" onclick="changeQty('${item.key}', 1)">+</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function openCart() {
@@ -439,7 +535,8 @@ async function checkout() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        items: cart.map(i => ({ name: i.name, price: i.price, size: i.size, qty: i.qty })),
+        // El precio lo pone el servidor a partir del id; name/price solo se mantienen por compatibilidad
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, size: i.size, qty: i.qty })),
         gym_id: gymId,
         success_url: origin + '/?pedido=ok',
         cancel_url: origin + '/',

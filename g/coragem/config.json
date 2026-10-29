@@ -11,8 +11,15 @@
     "instagram": "coragemjiujitsu",
     "whatsapp": "34935063622",
     "location": "Barcelona",
-    "tags": ["BJJ TEAM", "IBJJF"],
-    "meta": ["BARCELONA", "BJJ TEAM", "IBJJF"]
+    "tags": [
+      "BJJ TEAM",
+      "IBJJF"
+    ],
+    "meta": [
+      "BARCELONA",
+      "BJJ TEAM",
+      "IBJJF"
+    ]
   },
   "brand": {
     "accent": "#FFFFFF",
@@ -32,24 +39,46 @@
     {
       "id": "camiseta",
       "name": "Camiseta Coragem",
-      "desc": "100% algodón pesado 220g. Serigrafía en el pecho con el escudo del equipo.",
-      "price": 32,
+      "desc": "100% algodón pesado 220g. Logo Coragem en el pecho y la definición «co·ra·gem» en la espalda.",
+      "price": 25,
       "category": "ropa",
       "badge": null,
       "emoji": "👕",
-      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
-      "stripe": "https://buy.stripe.com/test_dRm5kEgao3aB1QX4GbafS00"
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "stripe": "https://buy.stripe.com/test_dRm5kEgao3aB1QX4GbafS00",
+      "images": [
+        "img/camiseta-espalda.webp",
+        "img/camiseta-frente.webp"
+      ]
     },
     {
       "id": "hoodie",
       "name": "Hoodie Coragem",
-      "desc": "Sudadera con capucha 340g. Interior polar. Logo bordado en pecho izquierdo.",
-      "price": 58,
+      "desc": "Sudadera con capucha 340g. Interior polar. Logo en el pecho y la definición «co·ra·gem» en la espalda.",
+      "price": 40,
       "category": "ropa",
       "badge": "BESTSELLER",
       "emoji": "🧥",
-      "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
-      "stripe": "https://buy.stripe.com/test_5kQ5kE8HWfXnfHNfkPafS01"
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "stripe": "https://buy.stripe.com/test_5kQ5kE8HWfXnfHNfkPafS01",
+      "images": [
+        "img/hoodie-espalda.webp",
+        "img/hoodie-frente.webp"
+      ]
     },
     {
       "id": "chanclas",
@@ -59,7 +88,16 @@
       "category": "ropa",
       "badge": null,
       "emoji": "🩴",
-      "sizes": ["38", "39", "40", "41", "42", "43", "44", "45"],
+      "sizes": [
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45"
+      ],
       "stripe": "https://buy.stripe.com/test_14A8wQ7DS12tantdcHafS02"
     },
     {
@@ -70,7 +108,9 @@
       "category": "ropa",
       "badge": null,
       "emoji": "🧢",
-      "sizes": ["ÚNICA"],
+      "sizes": [
+        "ÚNICA"
+      ],
       "stripe": "https://buy.stripe.com/test_14AeVe6zO6mN67dc8DafS03"
     },
     {
@@ -81,8 +121,28 @@
       "category": "ropa",
       "badge": null,
       "emoji": "🧦",
-      "sizes": ["36-39", "40-43", "44-46"],
+      "sizes": [
+        "36-39",
+        "40-43",
+        "44-46"
+      ],
       "stripe": "https://buy.stripe.com/test_4gM5kE0bqdPf539egLafS04"
+    },
+    {
+      "id": "totebag",
+      "name": "Totebag Coragem",
+      "desc": "Bolsa de tela negra con la definición «co·ra·gem» y el logo del equipo.",
+      "price": 10,
+      "category": "accesorios",
+      "badge": null,
+      "emoji": "👜",
+      "sizes": [
+        "ÚNICA"
+      ],
+      "images": [
+        "img/totebag-definicion.webp",
+        "img/totebag-logo.webp"
+      ]
     },
     {
       "id": "botella",
@@ -92,7 +152,9 @@
       "category": "accesorios",
       "badge": "EDICIÓN LIMITADA",
       "emoji": "🧴",
-      "sizes": ["ÚNICA"],
+      "sizes": [
+        "ÚNICA"
+      ],
       "stripe": "https://buy.stripe.com/test_28E8wQe2g4eF67dfkPafS05"
     },
     {
@@ -103,7 +165,9 @@
       "category": "accesorios",
       "badge": null,
       "emoji": "🗝️",
-      "sizes": ["ÚNICA"],
+      "sizes": [
+        "ÚNICA"
+      ],
       "stripe": "https://buy.stripe.com/test_14AeVe3nC9yZ8fl1tZafS06"
     },
     {
@@ -114,7 +178,9 @@
       "category": "accesorios",
       "badge": null,
       "emoji": "🏅",
-      "sizes": ["ÚNICA"],
+      "sizes": [
+        "ÚNICA"
+      ],
       "stripe": "https://buy.stripe.com/test_14A5kEe2g26xbrxb4zafS07"
     },
     {
@@ -125,7 +191,10 @@
       "category": "accesorios",
       "badge": null,
       "emoji": "🪙",
-      "sizes": ["20x30cm", "30x40cm"],
+      "sizes": [
+        "20x30cm",
+        "30x40cm"
+      ],
       "stripe": "https://buy.stripe.com/test_bJe5kE4rG5iJ0MT5KfafS08"
     },
     {
@@ -136,7 +205,9 @@
       "category": "equipamiento",
       "badge": null,
       "emoji": "🥋",
-      "sizes": ["PACK 3"],
+      "sizes": [
+        "PACK 3"
+      ],
       "stripe": "https://buy.stripe.com/test_00wcN63nC9yZ0MT6OjafS09"
     }
   ]
