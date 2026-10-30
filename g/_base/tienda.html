@@ -316,7 +316,8 @@ function buildPage(C) {
 
 function renderProducts(products, filter) {
   const grid = document.getElementById('productsGrid');
-  const list = filter === 'all' ? products : products.filter(p => p.category === filter);
+  // Los productos "hidden" son opciones de otro artículo (variants): no llevan tarjeta propia
+  const list = products.filter(p => !p.hidden && (filter === 'all' || p.category === filter));
   grid.innerHTML = list.map(p => {
     const hasSizes = p.sizes && p.sizes.length > 1;
     const imgs = productImages(p);
@@ -338,12 +339,16 @@ function renderProducts(products, filter) {
         <div class="product-name">${p.name}</div>
         <div class="product-desc">${p.desc}</div>
         ${p.needs_photo ? `<div class="photo-hint">📷 Al pulsar «Añadir» eliges tu foto</div>` : ''}
+        ${p.variants ? `
+        <div class="size-selector" id="var-${p.id}" data-selected="${p.variants[0].id}">
+          ${p.variants.map((v,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectVariant('${p.id}','${v.id}',this)">${v.label}</button>`).join('')}
+        </div>` : ''}
         ${hasSizes ? `
         <div class="size-selector" id="sz-${p.id}" data-selected="${p.sizes[0]}">
           ${p.sizes.map((s,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectSz('${p.id}','${s}',this)">${s}</button>`).join('')}
         </div>` : `<div id="sz-${p.id}" data-selected="${p.sizes ? p.sizes[0] : 'ÚNICA'}" style="display:none;"></div>`}
         <div class="product-footer">
-          <div class="product-price">${p.price.toFixed(2).replace('.',',')} <small>€</small></div>
+          <div class="product-price" id="price-${p.id}">${p.price.toFixed(2).replace('.',',')} <small>€</small></div>
           <button class="add-btn" id="addbtn-${p.id}" onclick="addToCart('${p.id}')">+ AÑADIR</button>
         </div>
       </div>
@@ -416,6 +421,15 @@ function selectSz(id, size, btn) {
   if (addBtn) { addBtn.classList.remove('added'); addBtn.textContent = '+ AÑADIR'; }
 }
 
+function selectVariant(id, variantId, btn) {
+  const el = document.getElementById('var-' + id);
+  el.dataset.selected = variantId;
+  el.querySelectorAll('.size-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const v = window._products.find(p => p.id === variantId);
+  document.getElementById('price-' + id).innerHTML = `${v.price.toFixed(2).replace('.',',')} <small>€</small>`;
+}
+
 // Productos personalizados: el cliente elige su foto y se sube antes de añadirlo al carrito
 function pickPhoto(productId) {
   const input = document.createElement('input');
@@ -444,7 +458,9 @@ async function uploadPhoto(productId, file) {
 }
 
 function addToCart(productId, photo) {
-  const product = window._products.find(p => p.id === productId);
+  // Si el artículo tiene opciones, lo que entra al carrito es la opción marcada
+  const varEl = document.getElementById('var-' + productId);
+  const product = window._products.find(p => p.id === (varEl ? varEl.dataset.selected : productId));
   if (!product) return;
   if (product.needs_photo && !photo) return pickPhoto(productId);
 
@@ -452,12 +468,12 @@ function addToCart(productId, photo) {
   const size = szEl ? (szEl.dataset.selected || 'ÚNICA') : 'ÚNICA';
 
   // Cada foto es una línea distinta del carrito
-  const key = productId + '::' + size + (photo ? '::' + photo : '');
+  const key = product.id + '::' + size + (photo ? '::' + photo : '');
   const existing = cart.find(i => i.key === key);
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ key, id: productId, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1, ...(photo && { photo }) });
+    cart.push({ key, id: product.id, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1, ...(photo && { photo }) });
   }
 
   saveCart();
