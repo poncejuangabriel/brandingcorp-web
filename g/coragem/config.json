@@ -84,7 +84,7 @@
       "id": "chanclas",
       "name": "Chanclas Coragem",
       "desc": "Suela EVA ultraligera. Logo Coragem en relieve. Perfectas para el vestuario.",
-      "price": 22,
+      "price": 12,
       "category": "ropa",
       "badge": null,
       "emoji": "🩴",
@@ -98,7 +98,9 @@
         "44",
         "45"
       ],
-      "stripe": "https://buy.stripe.com/test_14A8wQ7DS12tantdcHafS02"
+      "images": [
+        "img/chanclas.webp"
+      ]
     },
     {
       "id": "gorra",
