@@ -115,9 +115,9 @@
     },
     {
       "id": "calcetines",
-      "name": "Calcetines Coragem (pack 2)",
-      "desc": "Pack 2 pares. Algodón con elastano. Sublimación total con el diseño del equipo.",
-      "price": 12,
+      "name": "Calcetines Coragem",
+      "desc": "Calcetines negros de algodón con elastano. Logo Coragem en blanco repetido por toda la caña.",
+      "price": 7,
       "category": "ropa",
       "badge": null,
       "emoji": "🧦",
@@ -126,7 +126,9 @@
         "40-43",
         "44-46"
       ],
-      "stripe": "https://buy.stripe.com/test_4gM5kE0bqdPf539egLafS04"
+      "images": [
+        "img/calcetines.webp"
+      ]
     },
     {
       "id": "totebag",
