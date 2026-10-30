@@ -83,11 +83,12 @@
     {
       "id": "chanclas",
       "name": "Chanclas Coragem",
-      "desc": "Suela EVA ultraligera. Logo Coragem en relieve. Perfectas para el vestuario.",
+      "desc": "Suela EVA ultraligera. Logo Coragem en relieve y tu nombre personalizado. Perfectas para el vestuario.",
       "price": 12,
       "category": "ropa",
       "badge": null,
       "emoji": "🩴",
+      "needs_name": true,
       "sizes": [
         "38",
         "39",

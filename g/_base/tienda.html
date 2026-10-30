@@ -99,6 +99,9 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 .cart-item-name{font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .cart-item-size{font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:2px;}
 .photo-hint{font-size:11px;color:var(--gold);margin:-4px 0 12px;letter-spacing:.3px;}
+.name-input{display:block;width:100%;box-sizing:border-box;background:transparent;border:1px solid var(--border);border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;padding:10px 12px;margin-bottom:12px;outline:none;}
+.name-input:focus{border-color:var(--gold);}
+.name-input.missing{border-color:#C8302F;}
 .cart-item-price{font-size:14px;font-weight:900;color:var(--gold);margin-top:4px;}
 .qty-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .qty-btn{background:var(--border);border:none;color:#fff;width:28px;height:28px;border-radius:2px;cursor:pointer;font-size:16px;font-family:Montserrat,sans-serif;display:flex;align-items:center;justify-content:center;transition:background .1s;}
@@ -236,8 +239,8 @@ async function init() {
   cart = cart.flatMap(i => {
     const p = C.products.find(x => x.id === i.id);
     // Se descartan también artículos con una talla que ya no existe (o guardados sin talla)
-    // y productos personalizados que se añadieron sin foto
-    return p && p.sizes.includes(i.size) && (!p.needs_photo || i.photo)
+    // y productos personalizados que se añadieron sin foto o sin nombre
+    return p && p.sizes.includes(i.size) && (!p.needs_photo || i.photo) && (!p.needs_name || i.nombre)
       ? [{ ...i, name: p.name, price: p.price, emoji: p.emoji }] : [];
   });
   saveCart();
@@ -339,6 +342,7 @@ function renderProducts(products, filter) {
         <div class="product-name">${p.card_name || p.name}</div>
         <div class="product-desc">${p.desc}</div>
         ${p.needs_photo ? `<div class="photo-hint">📷 Al pulsar «Añadir» eliges tu foto</div>` : ''}
+        ${p.needs_name ? `<input class="name-input" id="nm-${p.id}" type="text" maxlength="12" placeholder="TU NOMBRE (MÁX. 12)" aria-label="Nombre para personalizar" autocomplete="off" oninput="this.value=limpiarNombre(this.value);this.classList.remove('missing')">` : ''}
         ${p.variants ? `
         <div class="size-selector" id="var-${p.id}" data-selected="${p.variants[0].id}">
           ${p.variants.map((v,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectVariant('${p.id}','${v.id}',this)">${v.label}</button>`).join('')}
@@ -457,6 +461,11 @@ async function uploadPhoto(productId, file) {
   }
 }
 
+// Productos con nombre: solo letras, números, espacios y guiones, igual que valida el worker
+function limpiarNombre(v) {
+  return v.toUpperCase().replace(/[^\p{L}\p{N} -]/gu, '').replace(/^[ -]+/, '').slice(0, 12);
+}
+
 function addToCart(productId, photo) {
   // Si el artículo tiene opciones, lo que entra al carrito es la opción marcada
   const varEl = document.getElementById('var-' + productId);
@@ -464,17 +473,25 @@ function addToCart(productId, photo) {
   if (!product) return;
   if (product.needs_photo && !photo) return pickPhoto(productId);
 
+  const nameEl = document.getElementById('nm-' + productId);
+  const nombre = product.needs_name && nameEl ? limpiarNombre(nameEl.value).trim() : '';
+  if (product.needs_name && !nombre) {
+    if (nameEl) { nameEl.classList.add('missing'); nameEl.focus(); }
+    return showToast('Escribe el nombre para personalizar');
+  }
+  if (nameEl) nameEl.value = '';
+
   const szEl = document.getElementById('sz-' + productId);
   // Una opción con tamaño propio (placa A3) no usa la talla marcada en la tarjeta
   const size = product.sizes.length === 1 ? product.sizes[0] : (szEl ? (szEl.dataset.selected || 'ÚNICA') : 'ÚNICA');
 
-  // Cada foto es una línea distinta del carrito
-  const key = product.id + '::' + size + (photo ? '::' + photo : '');
+  // Cada foto o nombre es una línea distinta del carrito
+  const key = product.id + '::' + size + (photo ? '::' + photo : '') + (nombre ? '::' + nombre : '');
   const existing = cart.find(i => i.key === key);
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ key, id: product.id, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1, ...(photo && { photo }) });
+    cart.push({ key, id: product.id, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1, ...(photo && { photo }), ...(nombre && { nombre }) });
   }
 
   saveCart();
@@ -544,6 +561,7 @@ function renderCart() {
         <div class="cart-item-name">${item.name}</div>
         ${item.size && item.size !== 'ÚNICA' && !item.photo ? `<div class="cart-item-size">TALLA: ${item.size}</div>` : ''}
         ${item.photo ? `<div class="cart-item-size">✓ CON TU FOTO</div>` : ''}
+        ${item.nombre ? `<div class="cart-item-size">NOMBRE: ${item.nombre}</div>` : ''}
         <div class="cart-item-price">${(item.price * item.qty).toFixed(2).replace('.', ',')} €</div>
       </div>
       <div class="qty-ctrl">
@@ -588,7 +606,7 @@ async function checkout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         // El precio lo pone el servidor a partir del id; name/price solo se mantienen por compatibilidad
-        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, size: i.size, qty: i.qty, photo: i.photo })),
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, size: i.size, qty: i.qty, photo: i.photo, nombre: i.nombre })),
         gym_id: gymId,
         success_url: origin + '/?pedido=ok',
         cancel_url: origin + '/',

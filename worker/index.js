@@ -3,6 +3,9 @@ const FOTO_MAX_BYTES = 15 * 1024 * 1024;
 const FOTO_TTL = 180 * 24 * 3600; // se borran solas a los 6 meses
 const FOTO_ID = /^[a-f0-9]{32}$/;
 
+// Nombre de los productos personalizados (chanclas, etc.)
+const NOMBRE = /^[\p{L}\p{N}][\p{L}\p{N} -]{0,11}$/u;
+
 // Detecta el formato por los primeros bytes, sin fiarse de lo que diga el navegador
 function fotoType(b) {
   if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'image/jpeg';
@@ -82,6 +85,7 @@ export default {
 
       const line_items = [];
       const fotos = []; // enlaces a las fotos de los productos personalizados
+      const nombres = []; // nombres que hay que imprimir en los productos personalizados
       const origin = new URL(request.url).origin;
       for (const item of items) {
         const product = catalog.find(p => p.id === item.id);
@@ -95,7 +99,17 @@ export default {
           }
           fotos.push(`${product.name} x${qty}: ${origin}/foto/${item.photo}`);
         }
-        const desc = [product.sizes.length > 1 ? `Talla: ${item.size}` : '', product.needs_photo ? 'Con tu foto' : ''].filter(Boolean).join(' · ');
+        if (product.needs_name) {
+          if (typeof item.nombre !== 'string' || !NOMBRE.test(item.nombre)) {
+            return new Response(JSON.stringify({ error: `Falta el nombre de «${product.name}». Quítalo del carrito y vuelve a añadirlo escribiendo el nombre.` }), { status: 400, headers });
+          }
+          nombres.push(`${product.name}, talla ${item.size}, x${qty}: ${item.nombre}`);
+        }
+        const desc = [
+          product.sizes.length > 1 ? `Talla: ${item.size}` : '',
+          product.needs_photo ? 'Con tu foto' : '',
+          product.needs_name ? `Nombre: ${item.nombre}` : '',
+        ].filter(Boolean).join(' · ');
         line_items.push({
           price_data: {
             currency: 'eur',
@@ -121,6 +135,10 @@ export default {
       fotos.forEach((f, i) => {
         body.append(`metadata[foto_${i + 1}]`, f);
         body.append(`payment_intent_data[metadata][foto_${i + 1}]`, f);
+      });
+      nombres.forEach((n, i) => {
+        body.append(`metadata[nombre_${i + 1}]`, n);
+        body.append(`payment_intent_data[metadata][nombre_${i + 1}]`, n);
       });
 
       // Datos de facturación: Stripe los pide en la propia página de pago
