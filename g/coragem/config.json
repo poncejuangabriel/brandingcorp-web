@@ -50,7 +50,12 @@
         "M",
         "L",
         "XL",
-        "XXL"
+        "XXL",
+        "4 AÑOS",
+        "6 AÑOS",
+        "8 AÑOS",
+        "10 AÑOS",
+        "12 AÑOS"
       ],
       "stripe": "https://buy.stripe.com/test_dRm5kEgao3aB1QX4GbafS00",
       "images": [
@@ -72,7 +77,12 @@
         "M",
         "L",
         "XL",
-        "XXL"
+        "XXL",
+        "4 AÑOS",
+        "6 AÑOS",
+        "8 AÑOS",
+        "10 AÑOS",
+        "12 AÑOS"
       ],
       "stripe": "https://buy.stripe.com/test_5kQ5kE8HWfXnfHNfkPafS01",
       "images": [
@@ -90,6 +100,16 @@
       "emoji": "🩴",
       "needs_name": true,
       "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
         "38",
         "39",
         "40",
@@ -101,7 +121,8 @@
       ],
       "images": [
         "img/chanclas.webp"
-      ]
+      ],
+      "default_size": "38"
     },
     {
       "id": "gorra",
@@ -127,6 +148,8 @@
       "badge": null,
       "emoji": "🧦",
       "sizes": [
+        "27-30",
+        "31-35",
         "36-39",
         "40-43",
         "44-46"
@@ -143,7 +166,8 @@
           "id": "calcetines-pack2",
           "label": "PACK X2"
         }
-      ]
+      ],
+      "default_size": "36-39"
     },
     {
       "id": "calcetines-pack2",
@@ -154,6 +178,8 @@
       "badge": null,
       "emoji": "🧦",
       "sizes": [
+        "27-30",
+        "31-35",
         "36-39",
         "40-43",
         "44-46"
@@ -161,7 +187,8 @@
       "images": [
         "img/calcetines.webp"
       ],
-      "hidden": true
+      "hidden": true,
+      "default_size": "36-39"
     },
     {
       "id": "totebag",

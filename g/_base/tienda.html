@@ -348,8 +348,8 @@ function renderProducts(products, filter) {
           ${p.variants.map((v,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectVariant('${p.id}','${v.id}',this)">${v.label}</button>`).join('')}
         </div>` : ''}
         ${hasSizes ? `
-        <div class="size-selector" id="sz-${p.id}" data-selected="${p.sizes[0]}">
-          ${p.sizes.map((s,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectSz('${p.id}','${s}',this)">${s}</button>`).join('')}
+        <div class="size-selector" id="sz-${p.id}" data-selected="${p.default_size || p.sizes[0]}">
+          ${p.sizes.map(s => `<button class="size-opt${s===(p.default_size || p.sizes[0])?' selected':''}" onclick="selectSz('${p.id}','${s}',this)">${s}</button>`).join('')}
         </div>` : `<div id="sz-${p.id}" data-selected="${p.sizes ? p.sizes[0] : 'ÚNICA'}" style="display:none;"></div>`}
         <div class="product-footer">
           <div class="product-price" id="price-${p.id}">${p.price.toFixed(2).replace('.',',')} <small>€</small></div>
