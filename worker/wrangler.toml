@@ -2,3 +2,7 @@ name = "brandingcorp-checkout"
 main = "index.js"
 compatibility_date = "2024-01-01"
 account_id = "a08415a4bac10c3fa4ebf67858accae3"
+
+[[kv_namespaces]]
+binding = "FOTOS"
+id = "2cf76184d5c14d2da96b7b7c89dac9c6"

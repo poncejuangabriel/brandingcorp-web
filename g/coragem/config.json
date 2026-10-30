@@ -203,7 +203,7 @@
     {
       "id": "placa-a4",
       "name": "Placa Sublimada A4",
-      "desc": "Placa de aluminio tamaño A4 (21x29,7cm) con tu foto de competición sublimada. Colores vivos y acabado brillante. Tras la compra te pedimos la foto.",
+      "desc": "Placa de aluminio tamaño A4 (21x29,7cm) con tu foto de competición sublimada. Colores vivos y acabado brillante. Al añadirla al carrito subes la foto que quieras.",
       "price": 20,
       "category": "accesorios",
       "badge": null,
@@ -213,12 +213,13 @@
       ],
       "images": [
         "img/placa-sublimada.webp"
-      ]
+      ],
+      "needs_photo": true
     },
     {
       "id": "placa-a3",
       "name": "Placa Sublimada A3",
-      "desc": "Placa de aluminio tamaño A3 (29,7x42cm) con tu foto de competición sublimada. Colores vivos y acabado brillante. Tras la compra te pedimos la foto.",
+      "desc": "Placa de aluminio tamaño A3 (29,7x42cm) con tu foto de competición sublimada. Colores vivos y acabado brillante. Al añadirla al carrito subes la foto que quieras.",
       "price": 30,
       "category": "accesorios",
       "badge": null,
@@ -228,7 +229,8 @@
       ],
       "images": [
         "img/placa-sublimada.webp"
-      ]
+      ],
+      "needs_photo": true
     },
     {
       "id": "stripes-dtf",

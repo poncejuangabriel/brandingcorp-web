@@ -1,9 +1,24 @@
+// Fotos que suben los clientes para productos personalizados (placas, etc.)
+const FOTO_MAX_BYTES = 15 * 1024 * 1024;
+const FOTO_TTL = 180 * 24 * 3600; // se borran solas a los 6 meses
+const FOTO_ID = /^[a-f0-9]{32}$/;
+
+// Detecta el formato por los primeros bytes, sin fiarse de lo que diga el navegador
+function fotoType(b) {
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'image/jpeg';
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return 'image/png';
+  const ascii = (from, to) => String.fromCharCode(...b.slice(from, to));
+  if (ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP') return 'image/webp';
+  if (ascii(4, 8) === 'ftyp' && /^(heic|heix|mif1|msf1)$/.test(ascii(8, 12))) return 'image/heic';
+  return null;
+}
+
 export default {
   async fetch(request, env) {
     // CORS para permitir llamadas desde brandingcorp.es
     const headers = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Content-Type': 'application/json',
     };
@@ -12,7 +27,39 @@ export default {
       return new Response(null, { headers });
     }
 
-    if (request.method !== 'POST') {
+    const { pathname } = new URL(request.url);
+
+    // Subir foto: devuelve un id que la tienda guarda en el carrito
+    if (pathname === '/foto' && request.method === 'POST') {
+      const bytes = new Uint8Array(await request.arrayBuffer());
+      if (bytes.length > FOTO_MAX_BYTES) {
+        return new Response(JSON.stringify({ error: 'La foto pesa demasiado (máximo 15 MB).' }), { status: 413, headers });
+      }
+      const type = fotoType(bytes);
+      if (!type) {
+        return new Response(JSON.stringify({ error: 'El archivo no es una foto válida (JPG, PNG, WEBP o HEIC).' }), { status: 400, headers });
+      }
+      const id = crypto.randomUUID().replace(/-/g, '');
+      await env.FOTOS.put('foto:' + id, bytes, { expirationTtl: FOTO_TTL, metadata: { type } });
+      await env.FOTOS.put('ok:' + id, '1', { expirationTtl: FOTO_TTL });
+      return new Response(JSON.stringify({ id }), { headers });
+    }
+
+    // Ver/descargar foto (el enlace llega en el pedido de Stripe)
+    const fotoMatch = pathname.match(/^\/foto\/([a-f0-9]{32})$/);
+    if (fotoMatch && request.method === 'GET') {
+      const { value, metadata } = await env.FOTOS.getWithMetadata('foto:' + fotoMatch[1], { type: 'arrayBuffer' });
+      if (!value) return new Response('Foto no encontrada o caducada', { status: 404 });
+      return new Response(value, {
+        headers: {
+          'Content-Type': metadata?.type || 'application/octet-stream',
+          'Cache-Control': 'private, max-age=86400',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    if (request.method !== 'POST' || pathname !== '/') {
       return new Response(JSON.stringify({ error: 'Método no permitido' }), { status: 405, headers });
     }
 
@@ -34,18 +81,27 @@ export default {
       const catalog = (await configRes.json()).products;
 
       const line_items = [];
+      const fotos = []; // enlaces a las fotos de los productos personalizados
+      const origin = new URL(request.url).origin;
       for (const item of items) {
         const product = catalog.find(p => p.id === item.id);
         const qty = Number(item.qty);
         if (!product || !Number.isInteger(qty) || qty < 1 || qty > 50 || !product.sizes.includes(item.size)) {
           return new Response(JSON.stringify({ error: 'El carrito ha cambiado. Recarga la página e inténtalo de nuevo.' }), { status: 400, headers });
         }
+        if (product.needs_photo) {
+          if (!FOTO_ID.test(item.photo || '') || !(await env.FOTOS.get('ok:' + item.photo))) {
+            return new Response(JSON.stringify({ error: `Falta la foto de «${product.name}». Quítalo del carrito y vuelve a añadirlo subiendo la foto.` }), { status: 400, headers });
+          }
+          fotos.push(`${product.name} x${qty}: ${origin}/foto/${item.photo}`);
+        }
+        const desc = [product.sizes.length > 1 ? `Talla: ${item.size}` : '', product.needs_photo ? 'Con tu foto' : ''].filter(Boolean).join(' · ');
         line_items.push({
           price_data: {
             currency: 'eur',
             product_data: {
               name: product.name,
-              description: product.sizes.length > 1 ? `Talla: ${item.size}` : undefined,
+              description: desc || undefined,
             },
             unit_amount: Math.round(product.price * 100), // céntimos
           },
@@ -60,6 +116,12 @@ export default {
       body.append('cancel_url', cancel_url || 'https://brandingcorp.es/g/' + gym_id + '/');
       body.append('locale', 'es');
       body.append('metadata[gym_id]', gym_id || 'desconocido');
+      // En el pago (Stripe → Pagos → el pedido → Metadatos) aparece el enlace a cada foto
+      body.append('payment_intent_data[metadata][gym_id]', gym_id);
+      fotos.forEach((f, i) => {
+        body.append(`metadata[foto_${i + 1}]`, f);
+        body.append(`payment_intent_data[metadata][foto_${i + 1}]`, f);
+      });
 
       // Datos de facturación: Stripe los pide en la propia página de pago
       body.append('billing_address_collection', 'required');

@@ -11,3 +11,4 @@ zi5oC21n
 # Secretos y entornos locales
 .env
 .env.*
+.wrangler/

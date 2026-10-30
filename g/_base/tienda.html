@@ -98,6 +98,7 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 .cart-item-info{flex:1;min-width:0;}
 .cart-item-name{font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .cart-item-size{font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:2px;}
+.photo-hint{font-size:11px;color:var(--gold);margin:-4px 0 12px;letter-spacing:.3px;}
 .cart-item-price{font-size:14px;font-weight:900;color:var(--gold);margin-top:4px;}
 .qty-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .qty-btn{background:var(--border);border:none;color:#fff;width:28px;height:28px;border-radius:2px;cursor:pointer;font-size:16px;font-family:Montserrat,sans-serif;display:flex;align-items:center;justify-content:center;transition:background .1s;}
@@ -235,7 +236,9 @@ async function init() {
   cart = cart.flatMap(i => {
     const p = C.products.find(x => x.id === i.id);
     // Se descartan también artículos con una talla que ya no existe (o guardados sin talla)
-    return p && p.sizes.includes(i.size) ? [{ ...i, name: p.name, price: p.price, emoji: p.emoji }] : [];
+    // y productos personalizados que se añadieron sin foto
+    return p && p.sizes.includes(i.size) && (!p.needs_photo || i.photo)
+      ? [{ ...i, name: p.name, price: p.price, emoji: p.emoji }] : [];
   });
   saveCart();
   renderCart();
@@ -334,6 +337,7 @@ function renderProducts(products, filter) {
       <div class="product-info">
         <div class="product-name">${p.name}</div>
         <div class="product-desc">${p.desc}</div>
+        ${p.needs_photo ? `<div class="photo-hint">📷 Al pulsar «Añadir» eliges tu foto</div>` : ''}
         ${hasSizes ? `
         <div class="size-selector" id="sz-${p.id}" data-selected="${p.sizes[0]}">
           ${p.sizes.map((s,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectSz('${p.id}','${s}',this)">${s}</button>`).join('')}
@@ -412,19 +416,48 @@ function selectSz(id, size, btn) {
   if (addBtn) { addBtn.classList.remove('added'); addBtn.textContent = '+ AÑADIR'; }
 }
 
-function addToCart(productId) {
+// Productos personalizados: el cliente elige su foto y se sube antes de añadirlo al carrito
+function pickPhoto(productId) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = () => input.files[0] && uploadPhoto(productId, input.files[0]);
+  input.click();
+}
+
+async function uploadPhoto(productId, file) {
+  const btn = document.getElementById('addbtn-' + productId);
+  const reset = () => { btn.disabled = false; btn.textContent = '+ AÑADIR'; };
+  if (file.size > 15 * 1024 * 1024) return alert('La foto pesa demasiado (máximo 15 MB).');
+  btn.disabled = true;
+  btn.textContent = 'SUBIENDO FOTO...';
+  try {
+    const res = await fetch(WORKER_URL + '/foto', { method: 'POST', headers: { 'Content-Type': file.type || 'application/octet-stream' }, body: file });
+    const data = await res.json();
+    reset();
+    if (!data.id) return alert(data.error || 'No se ha podido subir la foto. Inténtalo de nuevo.');
+    addToCart(productId, data.id);
+  } catch (err) {
+    reset();
+    alert('Error de conexión al subir la foto. Inténtalo de nuevo.');
+  }
+}
+
+function addToCart(productId, photo) {
   const product = window._products.find(p => p.id === productId);
   if (!product) return;
+  if (product.needs_photo && !photo) return pickPhoto(productId);
 
   const szEl = document.getElementById('sz-' + productId);
   const size = szEl ? (szEl.dataset.selected || 'ÚNICA') : 'ÚNICA';
 
-  const key = productId + '::' + size;
+  // Cada foto es una línea distinta del carrito
+  const key = productId + '::' + size + (photo ? '::' + photo : '');
   const existing = cart.find(i => i.key === key);
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ key, id: productId, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1 });
+    cart.push({ key, id: productId, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1, ...(photo && { photo }) });
   }
 
   saveCart();
@@ -486,13 +519,14 @@ function renderCart() {
 
   itemsEl.innerHTML = cart.map(item => {
     const p = (window._products || []).find(x => x.id === item.id);
-    const thumb = p && productImages(p)[0];
+    const thumb = item.photo ? WORKER_URL + '/foto/' + item.photo : p && productImages(p)[0];
     return `
     <div class="cart-item">
       ${thumb ? `<img class="cart-item-thumb" src="${thumb}" alt="">` : `<div class="cart-item-emoji">${item.emoji}</div>`}
       <div class="cart-item-info">
         <div class="cart-item-name">${item.name}</div>
-        ${item.size && item.size !== 'ÚNICA' ? `<div class="cart-item-size">TALLA: ${item.size}</div>` : ''}
+        ${item.size && item.size !== 'ÚNICA' && !item.photo ? `<div class="cart-item-size">TALLA: ${item.size}</div>` : ''}
+        ${item.photo ? `<div class="cart-item-size">✓ CON TU FOTO</div>` : ''}
         <div class="cart-item-price">${(item.price * item.qty).toFixed(2).replace('.', ',')} €</div>
       </div>
       <div class="qty-ctrl">
@@ -537,7 +571,7 @@ async function checkout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         // El precio lo pone el servidor a partir del id; name/price solo se mantienen por compatibilidad
-        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, size: i.size, qty: i.qty })),
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, size: i.size, qty: i.qty, photo: i.photo })),
         gym_id: gymId,
         success_url: origin + '/?pedido=ok',
         cancel_url: origin + '/',
