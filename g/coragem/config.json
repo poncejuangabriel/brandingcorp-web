@@ -131,6 +131,23 @@
       ]
     },
     {
+      "id": "calcetines-pack2",
+      "name": "Calcetines Coragem (pack 2 pares)",
+      "desc": "Pack de 2 pares de calcetines negros de algodón con elastano. Logo Coragem en blanco repetido por toda la caña.",
+      "price": 12,
+      "category": "ropa",
+      "badge": null,
+      "emoji": "🧦",
+      "sizes": [
+        "36-39",
+        "40-43",
+        "44-46"
+      ],
+      "images": [
+        "img/calcetines.webp"
+      ]
+    },
+    {
       "id": "totebag",
       "name": "Totebag Coragem",
       "desc": "Bolsa de tela negra con la definición «co·ra·gem» y el logo del equipo.",
