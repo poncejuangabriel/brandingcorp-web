@@ -104,14 +104,16 @@
       "id": "gorra",
       "name": "Gorra Coragem",
       "desc": "Gorra 5 paneles, cierre trasero ajustable. Bordado del monograma en frente.",
-      "price": 28,
+      "price": 15,
       "category": "ropa",
       "badge": null,
       "emoji": "🧢",
       "sizes": [
         "ÚNICA"
       ],
-      "stripe": "https://buy.stripe.com/test_14AeVe6zO6mN67dc8DafS03"
+      "images": [
+        "img/gorra.webp"
+      ]
     },
     {
       "id": "calcetines",
