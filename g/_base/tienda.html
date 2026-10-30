@@ -336,7 +336,7 @@ function renderProducts(products, filter) {
         ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
       </div>
       <div class="product-info">
-        <div class="product-name">${p.name}</div>
+        <div class="product-name">${p.card_name || p.name}</div>
         <div class="product-desc">${p.desc}</div>
         ${p.needs_photo ? `<div class="photo-hint">📷 Al pulsar «Añadir» eliges tu foto</div>` : ''}
         ${p.variants ? `
@@ -366,7 +366,7 @@ let lb = { imgs: [], i: 0 };
 function openLightbox(productId) {
   const p = window._products.find(x => x.id === productId);
   lb = { imgs: productImages(p), i: 0 };
-  document.getElementById('lbTitle').textContent = p.name;
+  document.getElementById('lbTitle').textContent = p.card_name || p.name;
   document.getElementById('lbImg').alt = p.name;
   const multi = lb.imgs.length > 1;
   document.getElementById('lbPrev').style.display = multi ? '' : 'none';
@@ -465,7 +465,8 @@ function addToCart(productId, photo) {
   if (product.needs_photo && !photo) return pickPhoto(productId);
 
   const szEl = document.getElementById('sz-' + productId);
-  const size = szEl ? (szEl.dataset.selected || 'ÚNICA') : 'ÚNICA';
+  // Una opción con tamaño propio (placa A3) no usa la talla marcada en la tarjeta
+  const size = product.sizes.length === 1 ? product.sizes[0] : (szEl ? (szEl.dataset.selected || 'ÚNICA') : 'ÚNICA');
 
   // Cada foto es una línea distinta del carrito
   const key = product.id + '::' + size + (photo ? '::' + photo : '');
