@@ -224,11 +224,12 @@
     {
       "id": "termo",
       "name": "Termo Coragem",
-      "desc": "Botella térmica negra con asa y tapa a rosca. Logo y nombre Coragem Jiu-Jitsu en blanco.",
+      "desc": "Botella térmica negra con asa y tapa a rosca. Logo y nombre Coragem Jiu-Jitsu en blanco, con tu nombre personalizado.",
       "price": 15,
       "category": "accesorios",
       "badge": null,
       "emoji": "🧴",
+      "needs_name": true,
       "sizes": [
         "ÚNICA"
       ],
