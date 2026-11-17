@@ -311,17 +311,20 @@
       "hidden": true
     },
     {
-      "id": "stripes-dtf",
-      "name": "Stripes DTF Cinturón (pack 3)",
-      "desc": "Pack 3 stripes en DTF para estampar en tu cinturón. Logo en blanco. Resistente al lavado.",
-      "price": 9,
+      "id": "parches-kimono",
+      "name": "Kit Parches Kimono",
+      "desc": "Kit completo para tu kimono: tu nombre personalizado, logo grande con «Coragem Jiu-Jitsu», dos logos pequeños y otro «Coragem Jiu-Jitsu» pequeño.",
+      "price": 25,
       "category": "equipamiento",
       "badge": null,
       "emoji": "🥋",
+      "needs_name": true,
       "sizes": [
-        "PACK 3"
+        "KIT"
       ],
-      "stripe": "https://buy.stripe.com/test_00wcN63nC9yZ0MT6OjafS09"
+      "images": [
+        "img/parches-kimono.webp"
+      ]
     }
   ]
 }
