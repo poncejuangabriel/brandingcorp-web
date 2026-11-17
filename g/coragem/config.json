@@ -240,15 +240,18 @@
     {
       "id": "llavero",
       "name": "Llavero Coragem",
-      "desc": "Llavero metálico con monograma grabado a laser. Acabado negro anodizado.",
-      "price": 9,
+      "desc": "Llavero redondo con el monograma Coragem en blanco sobre negro. Anilla y cadena metálicas.",
+      "price": 3,
       "category": "accesorios",
       "badge": null,
       "emoji": "🗝️",
       "sizes": [
         "ÚNICA"
       ],
-      "stripe": "https://buy.stripe.com/test_14AeVe3nC9yZ8fl1tZafS06"
+      "images": [
+        "img/llavero-1.webp",
+        "img/llavero-2.webp"
+      ]
     },
     {
       "id": "porta-medalla",
