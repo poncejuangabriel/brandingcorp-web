@@ -256,6 +256,7 @@
     {
       "id": "porta-medalla",
       "name": "Cuadro Porta Medalla",
+      "hidden": true,
       "desc": "Marco de madera negra con gancho para medallas y espacio para foto 10x15.",
       "price": 48,
       "category": "accesorios",
