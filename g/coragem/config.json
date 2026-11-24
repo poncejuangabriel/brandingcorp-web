@@ -30,6 +30,7 @@
     "btn_bg": "#FFFFFF",
     "btn_text": "#000000"
   },
+  "vales": true,
   "shipping_note": "Pago seguro vía Stripe · Envío a toda España",
   "return_url": "https://brandingcorp.es/g/coragem/?pedido=ok",
   "products": [

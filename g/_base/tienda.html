@@ -112,6 +112,19 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 .cart-total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px;}
 .cart-total-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--text-muted);}
 .cart-total-amount{font-size:28px;font-weight:900;color:#fff;}
+.vale-box{margin-bottom:16px;}
+.vale-row{display:flex;gap:8px;}
+.vale-row input{flex:1;min-width:0;background:transparent;border:1px solid var(--border);border-radius:2px;color:#fff;font-family:Montserrat,sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;padding:10px 12px;outline:none;text-transform:uppercase;}
+.vale-row input:focus{border-color:var(--gold);}
+.vale-row input::placeholder{font-size:12px;letter-spacing:1.5px;color:var(--text-muted);}
+.vale-row button{font-family:Montserrat,sans-serif;font-size:11px;font-weight:800;letter-spacing:1.5px;background:transparent;color:#fff;border:1px solid var(--border);border-radius:2px;padding:0 14px;cursor:pointer;}
+.vale-row button:disabled{opacity:.5;}
+.vale-msg{font-size:11px;font-weight:600;line-height:1.5;margin-top:8px;color:var(--text-muted);}
+.vale-msg.err{color:#E5534B;}
+.vale-ok{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.5px;}
+.vale-ok button{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:0 4px;}
+.vale-hint{display:inline-block;margin-top:28px;font-size:12px;font-weight:600;color:#fff;border:1px solid var(--gold);padding:10px 14px;border-radius:2px;line-height:1.5;}
+.vale-hint strong{color:var(--gold);}
 .checkout-btn{width:100%;background:var(--btn-bg);color:var(--btn-text);border:none;cursor:pointer;font-family:Montserrat,sans-serif;font-size:13px;font-weight:900;letter-spacing:2px;padding:18px;border-radius:2px;transition:opacity .15s;}
 .checkout-btn:hover{opacity:.85;}
 .checkout-btn:disabled{opacity:.5;cursor:not-allowed;}
@@ -175,6 +188,7 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
     <div class="cart-empty" id="cartEmpty">El carrito está vacío</div>
   </div>
   <div class="cart-foot" id="cartFoot" style="display:none;">
+    <div class="vale-box" id="valeBox" style="display:none;"></div>
     <div class="cart-total-row">
       <span class="cart-total-label">TOTAL</span>
       <span class="cart-total-amount" id="cartTotal">0,00 €</span>
@@ -190,6 +204,7 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
     <h1 id="heroTitle"></h1>
     <p class="hero-sub" id="heroDesc"></p>
     <div class="hero-meta" id="heroMeta"></div>
+    <div class="vale-hint" id="valeHint" style="display:none;">🎁 <strong>¿Tienes un vale de premio?</strong> Añade tu premio al carrito y escribe el código en el carrito.</div>
   </div>
 </section>
 
@@ -217,6 +232,8 @@ const WORKER_URL = 'https://brandingcorp-checkout.poncejuangabriel.workers.dev';
 // ── Estado del carrito ──────────────────────────────────────
 let cart = [];   // [{id, name, price, size, emoji, qty}]
 let gymId = '';
+let valesOn = false;
+let vale = null; // {codigo, producto}: vale de premio comprobado por el servidor
 
 // ── Cargar página ───────────────────────────────────────────
 async function init() {
@@ -234,6 +251,13 @@ async function init() {
 
   const saved = localStorage.getItem('bc_cart_' + gymId);
   if (saved) { try { cart = JSON.parse(saved); } catch(e) { cart = []; } }
+
+  // Vales de premio: "vales": true en config.json activa el campo del cupón en el carrito
+  valesOn = !!C.vales;
+  if (valesOn) {
+    document.getElementById('valeHint').style.display = '';
+    try { vale = JSON.parse(localStorage.getItem('bc_vale_' + gymId)); } catch(e) { vale = null; }
+  }
 
   buildPage(C);
 
@@ -581,8 +605,76 @@ function saveCart() {
   localStorage.setItem('bc_cart_' + gymId, JSON.stringify(cart));
 }
 
+// ── Vale de premio ──────────────────────────────────────────
+// El servidor comprueba el código y vuelve a validarlo al pagar; aquí solo se muestra el descuento
+function valeProducto() {
+  return vale && (window._products || []).find(p => p.id === vale.producto);
+}
+
+function valeDescuento() {
+  const item = vale && cart.find(i => i.id === vale.producto);
+  return item ? item.price : 0;
+}
+
+function renderVale() {
+  const box = document.getElementById('valeBox');
+  if (!valesOn) { box.style.display = 'none'; return; }
+  box.style.display = '';
+  if (vale) {
+    const p = valeProducto();
+    const nombre = p ? (p.card_name || p.name) : vale.producto;
+    const enCarrito = cart.some(i => i.id === vale.producto);
+    box.innerHTML = `
+      <div class="vale-ok"><span>🎁 VALE ${vale.codigo}: ${nombre.toUpperCase()} GRATIS${enCarrito ? ` (−${valeDescuento().toFixed(2).replace('.', ',')} €)` : ''}</span>
+        <button onclick="quitarVale()" aria-label="Quitar vale">×</button></div>
+      ${enCarrito ? '' : `<div class="vale-msg err">Añade al carrito ${nombre} para usar tu vale.</div>`}`;
+    return;
+  }
+  if (box.querySelector('#valeInput')) return; // no borrar lo que se está escribiendo
+  box.innerHTML = `
+    <div class="vale-row">
+      <input id="valeInput" type="text" placeholder="¿TIENES UN VALE? CÓDIGO" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="20"
+        onkeydown="if(event.key==='Enter')aplicarVale()" aria-label="Código del vale">
+      <button id="valeBtn" onclick="aplicarVale()">APLICAR</button>
+    </div>
+    <div class="vale-msg" id="valeMsg"></div>`;
+}
+
+async function aplicarVale() {
+  const input = document.getElementById('valeInput');
+  const msg = document.getElementById('valeMsg');
+  const btn = document.getElementById('valeBtn');
+  const codigo = input.value.trim();
+  if (!codigo) return input.focus();
+  btn.disabled = true;
+  msg.className = 'vale-msg';
+  msg.textContent = 'Comprobando...';
+  try {
+    const res = await fetch(WORKER_URL + '/vale/comprobar', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gym_id: gymId, codigo }),
+    });
+    const data = await res.json();
+    btn.disabled = false;
+    if (!data.ok) { msg.className = 'vale-msg err'; msg.textContent = data.error || 'No se ha podido comprobar el vale.'; return; }
+    vale = { codigo: data.codigo, producto: data.producto };
+    localStorage.setItem('bc_vale_' + gymId, JSON.stringify(vale));
+    renderCart();
+  } catch (err) {
+    btn.disabled = false;
+    msg.className = 'vale-msg err';
+    msg.textContent = 'Error de conexión. Inténtalo de nuevo.';
+  }
+}
+
+function quitarVale() {
+  vale = null;
+  localStorage.removeItem('bc_vale_' + gymId);
+  renderCart();
+}
+
 function renderCart() {
-  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const total = Math.max(0, cart.reduce((s, i) => s + i.price * i.qty, 0) - valeDescuento());
   const count = cart.reduce((s, i) => s + i.qty, 0);
 
   // Badge
@@ -603,6 +695,7 @@ function renderCart() {
 
   footEl.style.display = 'block';
   document.getElementById('cartTotal').textContent = total.toFixed(2).replace('.', ',') + ' €';
+  renderVale();
 
   itemsEl.innerHTML = cart.map(item => {
     const p = (window._products || []).find(x => x.id === item.id);
@@ -665,6 +758,7 @@ async function checkout() {
         gym_id: gymId,
         success_url: origin + '/?pedido=ok',
         cancel_url: origin + '/',
+        ...(vale && { vale: vale.codigo }),
       }),
     });
 
@@ -672,9 +766,12 @@ async function checkout() {
 
     if (data.url) {
       localStorage.removeItem('bc_cart_' + gymId);
+      localStorage.removeItem('bc_vale_' + gymId);
       window.location.href = data.url;
     } else {
-      alert('Error al procesar el pedido: ' + (data.error || 'Error desconocido'));
+      // Un vale que ya no sirve se quita para que el cliente pueda pagar el resto
+      if (['usado', 'no_existe'].includes(data.motivo)) quitarVale();
+      alert(data.motivo ? data.error : 'Error al procesar el pedido: ' + (data.error || 'Error desconocido'));
       btn.disabled = false;
       btn.textContent = 'FINALIZAR PEDIDO →';
     }

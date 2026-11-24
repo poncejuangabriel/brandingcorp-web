@@ -12,3 +12,7 @@ zi5oC21n
 .env
 .env.*
 .wrangler/
+
+# Códigos de vales (secretos: el repo es público)
+worker/vales/*
+!worker/vales/LEEME.txt

@@ -6,6 +6,84 @@ const FOTO_ID = /^[a-f0-9]{32}$/;
 // Nombre de los productos personalizados (chanclas, etc.)
 const NOMBRE = /^[\p{L}\p{N}][\p{L}\p{N} -]{0,11}$/u;
 
+// ── Vales de premio (tabla "vales" en D1, ver schema.sql) ──────────────────────
+// Cada código regala 1 unidad de un producto, una sola vez. El código se reserva al ir a pagar
+// y queda usado cuando Stripe confirma el pedido; si el cliente abandona el pago, se libera.
+const VALE_MAX_FALLOS = 5;
+const VALE_VENTANA_MS = 15 * 60 * 1000;
+const normalizarVale = c => (typeof c === 'string' ? c : '').toUpperCase().replace(/[\s-]/g, '');
+
+class ValeError extends Error {
+  constructor(message, status = 400, motivo = 'error') { super(message); this.status = status; this.motivo = motivo; }
+}
+
+// Límite anti fuerza bruta: solo cuentan los códigos que no existen
+async function valeLimite(env, ip) {
+  const desde = Date.now() - VALE_VENTANA_MS;
+  const { n } = await env.VALES.prepare('SELECT COUNT(*) AS n FROM vale_intentos WHERE ip = ? AND ts > ?').bind(ip, desde).first();
+  if (n >= VALE_MAX_FALLOS) {
+    throw new ValeError('Demasiados intentos con códigos incorrectos. Espera 15 minutos y vuelve a probar.', 429, 'limite');
+  }
+}
+
+async function valeFallo(env, ip) {
+  await env.VALES.batch([
+    env.VALES.prepare('INSERT INTO vale_intentos (ip, ts) VALUES (?, ?)').bind(ip, Date.now()),
+    env.VALES.prepare('DELETE FROM vale_intentos WHERE ts < ?').bind(Date.now() - VALE_VENTANA_MS),
+  ]);
+}
+
+async function stripeApi(env, method, path, body) {
+  const res = await fetch('https://api.stripe.com/v1/' + path, {
+    method,
+    headers: { 'Authorization': 'Bearer ' + env.STRIPE_SECRET_KEY, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+  return { ok: res.ok, data: await res.json() };
+}
+
+// Busca el vale y pone al día su estado con Stripe. Con liberar=true (al ir a pagar), una
+// reserva con el pago todavía abierto se cancela para que el cliente pueda volver a intentarlo.
+async function valeBuscar(env, gymId, codigoCliente, ip, liberar) {
+  await valeLimite(env, ip);
+  const codigo = normalizarVale(codigoCliente);
+  const vale = /^[A-Z0-9]{4,32}$/.test(codigo)
+    ? await env.VALES.prepare('SELECT * FROM vales WHERE codigo = ? AND campana = ?').bind(codigo, gymId).first()
+    : null;
+  if (!vale) {
+    await valeFallo(env, ip);
+    throw new ValeError('Ese código no existe. Revisa que esté bien escrito.', 404, 'no_existe');
+  }
+
+  if (vale.estado === 'reservado') {
+    const usado = () => env.VALES.prepare("UPDATE vales SET estado = 'usado', usado_at = ? WHERE codigo = ? AND estado = 'reservado'").bind(Date.now(), codigo).run();
+    const soltar = () => env.VALES.prepare("UPDATE vales SET estado = 'libre', session_id = NULL, reservado_at = NULL WHERE codigo = ? AND estado = 'reservado' AND session_id IS ?").bind(codigo, vale.session_id).run();
+    if (vale.session_id) {
+      const { data: s } = await stripeApi(env, 'GET', 'checkout/sessions/' + vale.session_id);
+      if (s.status === 'complete') { await usado(); vale.estado = 'usado'; }
+      else if (s.status === 'expired') { await soltar(); vale.estado = 'libre'; }
+      else if (s.status === 'open' && liberar) {
+        const exp = await stripeApi(env, 'POST', `checkout/sessions/${vale.session_id}/expire`);
+        if (exp.ok) { await soltar(); vale.estado = 'libre'; }
+        else { // no se pudo cancelar: probablemente se acaba de pagar
+          const { data: s2 } = await stripeApi(env, 'GET', 'checkout/sessions/' + vale.session_id);
+          if (s2.status === 'complete') { await usado(); vale.estado = 'usado'; }
+        }
+      }
+    } else if (Date.now() - vale.reservado_at > 2 * 60 * 1000) {
+      await soltar(); vale.estado = 'libre'; // reserva que se quedó a medias (error al crear el pago)
+    }
+  }
+
+  if (vale.estado === 'usado') {
+    throw new ValeError(`El vale ${vale.visible} ya se ha canjeado.`, 409, 'usado');
+  }
+  if (vale.estado === 'reservado' && liberar) {
+    throw new ValeError(`El vale ${vale.visible} se está usando en otro pedido ahora mismo. Prueba en un par de minutos.`, 409, 'en_uso');
+  }
+  return vale;
+}
+
 // Detecta el formato por los primeros bytes, sin fiarse de lo que diga el navegador
 function fotoType(b) {
   if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'image/jpeg';
@@ -62,12 +140,27 @@ export default {
       });
     }
 
+    const ip = request.headers.get('CF-Connecting-IP') || 'desconocida';
+
+    // Comprobar un vale desde el carrito (no lo reserva ni lo gasta)
+    if (pathname === '/vale/comprobar' && request.method === 'POST') {
+      try {
+        const { gym_id, codigo } = await request.json();
+        const vale = await valeBuscar(env, String(gym_id || ''), codigo, ip, false);
+        return new Response(JSON.stringify({ ok: true, codigo: vale.visible, producto: vale.producto }), { headers });
+      } catch (err) {
+        if (err instanceof ValeError) return new Response(JSON.stringify({ error: err.message, motivo: err.motivo }), { status: err.status, headers });
+        return new Response(JSON.stringify({ error: 'Error interno: ' + err.message }), { status: 500, headers });
+      }
+    }
+
     if (request.method !== 'POST' || pathname !== '/') {
       return new Response(JSON.stringify({ error: 'Método no permitido' }), { status: 405, headers });
     }
 
+    let valeReservado = null; // si falla la creación del pago, se libera
     try {
-      const { items, gym_id, success_url, cancel_url } = await request.json();
+      const { items, gym_id, success_url, cancel_url, vale: valeCodigo } = await request.json();
 
       if (!items || items.length === 0) {
         return new Response(JSON.stringify({ error: 'Carrito vacío' }), { status: 400, headers });
@@ -123,6 +216,7 @@ export default {
           product.needs_name ? `Nombre: ${item.nombre}` : '',
         ].filter(Boolean).join(' · ');
         line_items.push({
+          id: product.id,
           price_data: {
             currency: 'eur',
             product_data: {
@@ -135,27 +229,51 @@ export default {
         });
       }
 
+      // Vale de premio: 1 unidad del producto del vale pasa a 0 €. Se reserva aquí de forma
+      // atómica (solo una petición puede pasarlo de "libre" a "reservado").
+      let vale = null;
+      if (valeCodigo) {
+        vale = await valeBuscar(env, gym_id, valeCodigo, ip, true);
+        const i = line_items.findIndex(l => l.id === vale.producto);
+        if (i < 0) {
+          const premio = catalog.find(p => p.id === vale.producto);
+          throw new ValeError(`Para usar el vale ${vale.visible} añade al carrito: ${premio ? premio.name : vale.producto}.`, 400, 'falta_producto');
+        }
+        const l = line_items[i];
+        const gratis = {
+          ...l,
+          quantity: 1,
+          price_data: { ...l.price_data, unit_amount: 0, product_data: { ...l.price_data.product_data, name: `${l.price_data.product_data.name} · Vale ${vale.visible}` } },
+        };
+        if (l.quantity > 1) { l.quantity--; line_items.splice(i + 1, 0, gratis); }
+        else line_items[i] = gratis;
+
+        const r = await env.VALES.prepare("UPDATE vales SET estado = 'reservado', session_id = NULL, reservado_at = ? WHERE codigo = ? AND estado = 'libre'")
+          .bind(Date.now(), vale.codigo).run();
+        if (r.meta.changes !== 1) {
+          throw new ValeError(`El vale ${vale.visible} se está usando en otro pedido ahora mismo. Prueba en un par de minutos.`, 409, 'en_uso');
+        }
+        valeReservado = vale.codigo;
+      }
+      // Un pedido de 0 € (solo el premio) no tiene pago: Stripe no admite payment_intent_data
+      const hayPago = line_items.some(l => l.price_data.unit_amount > 0);
+
       // Crear sesión de Stripe Checkout
       const body = new URLSearchParams();
       body.append('mode', 'payment');
       body.append('success_url', success_url || 'https://brandingcorp.es/g/' + gym_id + '/?pedido=ok');
       body.append('cancel_url', cancel_url || 'https://brandingcorp.es/g/' + gym_id + '/');
       body.append('locale', 'es');
-      body.append('metadata[gym_id]', gym_id || 'desconocido');
-      // En el pago (Stripe → Pagos → el pedido → Metadatos) aparece el enlace a cada foto
-      body.append('payment_intent_data[metadata][gym_id]', gym_id);
-      fotos.forEach((f, i) => {
-        body.append(`metadata[foto_${i + 1}]`, f);
-        body.append(`payment_intent_data[metadata][foto_${i + 1}]`, f);
-      });
-      nombres.forEach((n, i) => {
-        body.append(`metadata[nombre_${i + 1}]`, n);
-        body.append(`payment_intent_data[metadata][nombre_${i + 1}]`, n);
-      });
-      modelos.forEach((m, i) => {
-        body.append(`metadata[modelo_${i + 1}]`, m);
-        body.append(`payment_intent_data[metadata][modelo_${i + 1}]`, m);
-      });
+      // En el pago (Stripe → Pagos → el pedido → Metadatos) aparece el enlace a cada foto, etc.
+      const meta = (k, v) => {
+        body.append(`metadata[${k}]`, v);
+        if (hayPago) body.append(`payment_intent_data[metadata][${k}]`, v);
+      };
+      meta('gym_id', gym_id || 'desconocido');
+      if (vale) meta('vale', `${vale.visible} → ${vale.producto} (gratis)`);
+      fotos.forEach((f, i) => meta(`foto_${i + 1}`, f));
+      nombres.forEach((n, i) => meta(`nombre_${i + 1}`, n));
+      modelos.forEach((m, i) => meta(`modelo_${i + 1}`, m));
 
       // Datos de facturación: Stripe los pide en la propia página de pago
       body.append('billing_address_collection', 'required');
@@ -184,13 +302,23 @@ export default {
       const session = await stripeRes.json();
 
       if (!stripeRes.ok) {
-        return new Response(JSON.stringify({ error: session.error?.message || 'Error de Stripe' }), { status: 500, headers });
+        throw new Error(session.error?.message || 'Error de Stripe');
       }
 
+      if (valeReservado) {
+        await env.VALES.prepare('UPDATE vales SET session_id = ? WHERE codigo = ?').bind(session.id, valeReservado).run();
+      }
       return new Response(JSON.stringify({ url: session.url }), { headers });
 
     } catch (err) {
-      return new Response(JSON.stringify({ error: 'Error interno: ' + err.message }), { status: 500, headers });
+      if (valeReservado) {
+        await env.VALES.prepare("UPDATE vales SET estado = 'libre', reservado_at = NULL WHERE codigo = ? AND estado = 'reservado' AND session_id IS NULL")
+          .bind(valeReservado).run().catch(() => {});
+      }
+      if (err instanceof ValeError) {
+        return new Response(JSON.stringify({ error: err.message, motivo: err.motivo }), { status: err.status, headers });
+      }
+      return new Response(JSON.stringify({ error: 'Error: ' + err.message }), { status: 500, headers });
     }
   }
 };

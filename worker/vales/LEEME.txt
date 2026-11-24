@@ -1,0 +1,5 @@
+Aquí van los CSV con los códigos (codigo,producto). Esta carpeta NO se sube a GitHub (el repo es público).
+Ejemplo de coragem.csv:
+  codigo,producto
+  XYZ-AB12,camiseta
+Cargar: node scripts/cargar-vales.js coragem vales/coragem.csv --remote
