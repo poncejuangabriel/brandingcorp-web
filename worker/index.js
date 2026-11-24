@@ -86,6 +86,7 @@ export default {
       const line_items = [];
       const fotos = []; // enlaces a las fotos de los productos personalizados
       const nombres = []; // nombres que hay que imprimir en los productos personalizados
+      const modelos = []; // modelo elegido en productos con varios diseños (calcetines, etc.)
       const origin = new URL(request.url).origin;
       for (const item of items) {
         const product = catalog.find(p => p.id === item.id);
@@ -105,7 +106,18 @@ export default {
           }
           nombres.push(`${product.name}, talla ${item.size}, x${qty}: ${item.nombre}`);
         }
+        let modelo = '';
+        if (product.models) {
+          const ids = item.modelo;
+          if (!Array.isArray(ids) || ids.length !== (product.model_slots || 1) || !ids.every(id => product.models.some(m => m.id === id))) {
+            return new Response(JSON.stringify({ error: `Falta el modelo de «${product.name}». Quítalo del carrito y vuelve a añadirlo eligiendo el modelo.` }), { status: 400, headers });
+          }
+          const labels = ids.map(id => product.models.find(m => m.id === id).label);
+          modelo = (labels.length > 1 ? 'Modelos: ' : 'Modelo: ') + labels.join(' + ');
+          modelos.push(`${product.name}, talla ${item.size}, x${qty}: ${labels.join(' + ')}`);
+        }
         const desc = [
+          modelo,
           product.sizes.length > 1 ? `Talla: ${item.size}` : '',
           product.needs_photo ? 'Con tu foto' : '',
           product.needs_name ? `Nombre: ${item.nombre}` : '',
@@ -139,6 +151,10 @@ export default {
       nombres.forEach((n, i) => {
         body.append(`metadata[nombre_${i + 1}]`, n);
         body.append(`payment_intent_data[metadata][nombre_${i + 1}]`, n);
+      });
+      modelos.forEach((m, i) => {
+        body.append(`metadata[modelo_${i + 1}]`, m);
+        body.append(`payment_intent_data[metadata][modelo_${i + 1}]`, m);
       });
 
       // Datos de facturación: Stripe los pide en la propia página de pago

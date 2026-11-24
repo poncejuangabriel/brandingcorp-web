@@ -67,6 +67,7 @@ body{background:var(--bg);font-family:Montserrat,system-ui,sans-serif;color:#fff
 .size-selector{display:flex;gap:6px;flex-wrap:wrap;}
 .size-opt{font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 10px;border:1px solid var(--border);border-radius:2px;cursor:pointer;color:var(--text-muted);background:transparent;font-family:Montserrat,sans-serif;transition:all .1s;}
 .size-opt:hover,.size-opt.selected{background:var(--btn-bg);color:var(--btn-text);border-color:var(--btn-bg);}
+.opt-lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text-muted);margin-bottom:-4px;}
 
 /* CART SIDEBAR */
 .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s;}
@@ -240,7 +241,7 @@ async function init() {
     const p = C.products.find(x => x.id === i.id);
     // Se descartan también artículos con una talla que ya no existe (o guardados sin talla)
     // y productos personalizados que se añadieron sin foto o sin nombre
-    return p && p.sizes.includes(i.size) && (!p.needs_photo || i.photo) && (!p.needs_name || i.nombre)
+    return p && p.sizes.includes(i.size) && (!p.needs_photo || i.photo) && (!p.needs_name || i.nombre) && modelosValidos(p, i.modelo)
       ? [{ ...i, name: p.name, price: p.price, emoji: p.emoji }] : [];
   });
   saveCart();
@@ -347,6 +348,7 @@ function renderProducts(products, filter) {
         <div class="size-selector" id="var-${p.id}" data-selected="${p.variants[0].id}">
           ${p.variants.map((v,i) => `<button class="size-opt${i===0?' selected':''}" onclick="selectVariant('${p.id}','${v.id}',this)">${v.label}</button>`).join('')}
         </div>` : ''}
+        ${p.models ? `<div id="mod-${p.id}" style="display:flex;flex-direction:column;gap:10px;">${modelRows(p.id, p)}</div>` : ''}
         ${hasSizes ? `
         <div class="size-selector" id="sz-${p.id}" data-selected="${p.default_size || p.sizes[0]}">
           ${p.sizes.map(s => `<button class="size-opt${s===(p.default_size || p.sizes[0])?' selected':''}" onclick="selectSz('${p.id}','${s}',this)">${s}</button>`).join('')}
@@ -432,6 +434,51 @@ function selectVariant(id, variantId, btn) {
   btn.classList.add('selected');
   const v = window._products.find(p => p.id === variantId);
   document.getElementById('price-' + id).innerHTML = `${v.price.toFixed(2).replace('.',',')} <small>€</small>`;
+  // Cada opción puede pedir un número distinto de modelos (1 par → 1, pack x2 → 2)
+  const modEl = document.getElementById('mod-' + id);
+  if (modEl && v.models) {
+    const prev = [...modEl.querySelectorAll('.model-sel')].map(el => el.dataset.selected);
+    modEl.innerHTML = modelRows(id, v, prev);
+  }
+}
+
+// Selector de modelo: una fila por cada elección (model_slots), p. ej. «PAR 1» y «PAR 2» en un pack
+function modelRows(cardId, p, prev = []) {
+  const n = p.model_slots || 1;
+  return Array.from({ length: n }, (_, s) => {
+    const sel = p.models.some(m => m.id === prev[s]) ? prev[s] : p.models[0].id;
+    return `
+    <div class="opt-lbl">${n > 1 ? `${p.model_slot_label || 'OPCIÓN'} ${s + 1}` : 'MODELO'}</div>
+    <div class="size-selector model-sel" data-selected="${sel}">
+      ${p.models.map(m => `<button class="size-opt${m.id === sel ? ' selected' : ''}" onclick="selectModel('${cardId}','${m.id}',this)">${m.label}</button>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+function selectModel(cardId, modelId, btn) {
+  const row = btn.parentElement;
+  row.dataset.selected = modelId;
+  row.querySelectorAll('.size-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  // La foto de la tarjeta muestra el modelo que se acaba de elegir
+  const p = window._products.find(x => x.id === cardId);
+  const m = p && p.models && p.models.find(x => x.id === modelId);
+  const img = document.querySelector('#card-' + cardId + ' .product-img img');
+  if (m && m.image && img) img.src = m.image;
+  const addBtn = document.getElementById('addbtn-' + cardId);
+  if (addBtn) { addBtn.classList.remove('added'); addBtn.textContent = '+ AÑADIR'; }
+}
+
+function modelosValidos(p, modelo) {
+  if (!p.models) return true;
+  return Array.isArray(modelo) && modelo.length === (p.model_slots || 1)
+    && modelo.every(id => p.models.some(m => m.id === id));
+}
+
+function modeloTexto(p, modelo) {
+  if (!p || !p.models || !modelo) return '';
+  const labels = modelo.map(id => (p.models.find(m => m.id === id) || {}).label || id);
+  return (labels.length > 1 ? 'MODELOS: ' : 'MODELO: ') + labels.join(' + ');
 }
 
 // Productos personalizados: el cliente elige su foto y se sube antes de añadirlo al carrito
@@ -481,17 +528,22 @@ function addToCart(productId, photo) {
   }
   if (nameEl) nameEl.value = '';
 
+  const modelo = product.models
+    ? [...document.querySelectorAll('#mod-' + productId + ' .model-sel')].map(el => el.dataset.selected)
+    : null;
+  if (!modelosValidos(product, modelo)) return showToast('Elige el modelo');
+
   const szEl = document.getElementById('sz-' + productId);
   // Una opción con tamaño propio (placa A3) no usa la talla marcada en la tarjeta
   const size = product.sizes.length === 1 ? product.sizes[0] : (szEl ? (szEl.dataset.selected || 'ÚNICA') : 'ÚNICA');
 
   // Cada foto o nombre es una línea distinta del carrito
-  const key = product.id + '::' + size + (photo ? '::' + photo : '') + (nombre ? '::' + nombre : '');
+  const key = product.id + '::' + size + (photo ? '::' + photo : '') + (nombre ? '::' + nombre : '') + (modelo ? '::' + modelo.join('+') : '');
   const existing = cart.find(i => i.key === key);
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ key, id: product.id, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1, ...(photo && { photo }), ...(nombre && { nombre }) });
+    cart.push({ key, id: product.id, name: product.name, price: product.price, size, emoji: product.emoji, qty: 1, ...(photo && { photo }), ...(nombre && { nombre }), ...(modelo && { modelo }) });
   }
 
   saveCart();
@@ -553,7 +605,8 @@ function renderCart() {
 
   itemsEl.innerHTML = cart.map(item => {
     const p = (window._products || []).find(x => x.id === item.id);
-    const thumb = item.photo ? WORKER_URL + '/foto/' + item.photo : p && productImages(p)[0];
+    const modelImg = p && p.models && item.modelo && (p.models.find(m => m.id === item.modelo[0]) || {}).image;
+    const thumb = item.photo ? WORKER_URL + '/foto/' + item.photo : modelImg || (p && productImages(p)[0]);
     return `
     <div class="cart-item">
       ${thumb ? `<img class="cart-item-thumb" src="${thumb}" alt="">` : `<div class="cart-item-emoji">${item.emoji}</div>`}
@@ -562,6 +615,7 @@ function renderCart() {
         ${item.size && item.size !== 'ÚNICA' && !item.photo ? `<div class="cart-item-size">TALLA: ${item.size}</div>` : ''}
         ${item.photo ? `<div class="cart-item-size">✓ CON TU FOTO</div>` : ''}
         ${item.nombre ? `<div class="cart-item-size">NOMBRE: ${item.nombre}</div>` : ''}
+        ${item.modelo ? `<div class="cart-item-size">${modeloTexto(p, item.modelo)}</div>` : ''}
         <div class="cart-item-price">${(item.price * item.qty).toFixed(2).replace('.', ',')} €</div>
       </div>
       <div class="qty-ctrl">
@@ -606,7 +660,7 @@ async function checkout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         // El precio lo pone el servidor a partir del id; name/price solo se mantienen por compatibilidad
-        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, size: i.size, qty: i.qty, photo: i.photo, nombre: i.nombre })),
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, size: i.size, qty: i.qty, photo: i.photo, nombre: i.nombre, modelo: i.modelo })),
         gym_id: gymId,
         success_url: origin + '/?pedido=ok',
         cancel_url: origin + '/',

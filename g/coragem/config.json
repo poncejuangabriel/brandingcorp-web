@@ -139,7 +139,7 @@
     {
       "id": "calcetines",
       "name": "Calcetines Coragem",
-      "desc": "Calcetines negros de algodón con elastano. Logo Coragem en blanco repetido por toda la caña.",
+      "desc": "Calcetines blancos de algodón con elastano. Dos modelos: monogramas Coragem por toda la caña o logo Coragem Jiu Jitsu.",
       "price": 7,
       "category": "ropa",
       "badge": null,
@@ -152,7 +152,8 @@
         "44-46"
       ],
       "images": [
-        "img/calcetines.webp"
+        "img/calcetines-monogramas.webp",
+        "img/calcetines-logo.webp"
       ],
       "variants": [
         {
@@ -164,12 +165,25 @@
           "label": "PACK X2"
         }
       ],
-      "default_size": "36-39"
+      "default_size": "36-39",
+      "models": [
+        {
+          "id": "monogramas",
+          "label": "MONOGRAMAS",
+          "image": "img/calcetines-monogramas.webp"
+        },
+        {
+          "id": "logo",
+          "label": "LOGO",
+          "image": "img/calcetines-logo.webp"
+        }
+      ],
+      "model_slots": 1
     },
     {
       "id": "calcetines-pack2",
       "name": "Calcetines Coragem (pack 2 pares)",
-      "desc": "Pack de 2 pares de calcetines negros de algodón con elastano. Logo Coragem en blanco repetido por toda la caña.",
+      "desc": "Pack de 2 pares de calcetines blancos de algodón con elastano. Elige el modelo de cada par.",
       "price": 12,
       "category": "ropa",
       "badge": null,
@@ -182,10 +196,25 @@
         "44-46"
       ],
       "images": [
-        "img/calcetines.webp"
+        "img/calcetines-monogramas.webp",
+        "img/calcetines-logo.webp"
       ],
       "hidden": true,
-      "default_size": "36-39"
+      "default_size": "36-39",
+      "models": [
+        {
+          "id": "monogramas",
+          "label": "MONOGRAMAS",
+          "image": "img/calcetines-monogramas.webp"
+        },
+        {
+          "id": "logo",
+          "label": "LOGO",
+          "image": "img/calcetines-logo.webp"
+        }
+      ],
+      "model_slots": 2,
+      "model_slot_label": "PAR"
     },
     {
       "id": "totebag",
