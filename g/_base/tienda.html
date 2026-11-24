@@ -227,7 +227,8 @@ async function init() {
   }
 
   const configPath = window.GYM_CONFIG_PATH || '../config.json';
-  const resp = await fetch(configPath);
+  // Sin caché: un cambio de catálogo se ve al recargar, sin esperar a que caduque la del navegador
+  const resp = await fetch(configPath + (configPath.includes('?') ? '&' : '?') + 'v=' + Date.now(), { cache: 'no-store' });
   const C = await resp.json();
   gymId = C.gym.id || 'gym';
 
