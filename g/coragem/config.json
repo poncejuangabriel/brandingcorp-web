@@ -62,9 +62,46 @@
       ]
     },
     {
+      "id": "camiseta-logo",
+      "name": "Camiseta Coragem Logo",
+      "desc": "100% algodón pesado 220g. Logo Coragem en el pecho y logo grande Coragem Jiu Jitsu en la espalda. Elige corte regular u oversize.",
+      "price": 25,
+      "category": "ropa",
+      "badge": "NUEVO",
+      "emoji": "👕",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "4 AÑOS",
+        "6 AÑOS",
+        "8 AÑOS",
+        "10 AÑOS",
+        "12 AÑOS"
+      ],
+      "images": [
+        "img/camiseta-logo-espalda.webp",
+        "img/camiseta-logo-frente.webp"
+      ],
+      "model_label": "ESTILO",
+      "models": [
+        {
+          "id": "regular",
+          "label": "REGULAR"
+        },
+        {
+          "id": "oversize",
+          "label": "OVERSIZE"
+        }
+      ]
+    },
+    {
       "id": "hoodie",
-      "name": "Hoodie Coragem",
-      "desc": "Sudadera con capucha 340g. Interior polar. Logo en el pecho y la definición «co·ra·gem» en la espalda.",
+      "name": "Sudadera Coragem",
+      "desc": "Sudadera de cuello redondo 340g. Interior polar. Logo en el pecho y la definición «co·ra·gem» en la espalda.",
       "price": 40,
       "category": "ropa",
       "badge": "BESTSELLER",
@@ -84,8 +121,8 @@
       ],
       "stripe": "https://buy.stripe.com/test_5kQ5kE8HWfXnfHNfkPafS01",
       "images": [
-        "img/hoodie-espalda.webp",
-        "img/hoodie-frente.webp"
+        "img/sudadera-espalda.webp",
+        "img/sudadera-frente.webp"
       ]
     },
     {

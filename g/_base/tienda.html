@@ -473,7 +473,7 @@ function modelRows(cardId, p, prev = []) {
   return Array.from({ length: n }, (_, s) => {
     const sel = p.models.some(m => m.id === prev[s]) ? prev[s] : p.models[0].id;
     return `
-    <div class="opt-lbl">${n > 1 ? `${p.model_slot_label || 'OPCIÓN'} ${s + 1}` : 'MODELO'}</div>
+    <div class="opt-lbl">${n > 1 ? `${p.model_slot_label || 'OPCIÓN'} ${s + 1}` : (p.model_label || 'MODELO')}</div>
     <div class="size-selector model-sel" data-selected="${sel}">
       ${p.models.map(m => `<button class="size-opt${m.id === sel ? ' selected' : ''}" onclick="selectModel('${cardId}','${m.id}',this)">${m.label}</button>`).join('')}
     </div>`;
