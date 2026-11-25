@@ -126,6 +126,32 @@
       ]
     },
     {
+      "id": "sudadera-logo",
+      "name": "Sudadera Coragem Logo",
+      "desc": "Sudadera de cuello redondo 340g. Interior polar. Logo Coragem en el pecho y logo grande Coragem Jiu Jitsu en la espalda.",
+      "price": 40,
+      "category": "ropa",
+      "badge": "NUEVO",
+      "emoji": "🧥",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "4 AÑOS",
+        "6 AÑOS",
+        "8 AÑOS",
+        "10 AÑOS",
+        "12 AÑOS"
+      ],
+      "images": [
+        "img/sudadera-logo-espalda.webp",
+        "img/sudadera-logo-frente.webp"
+      ]
+    },
+    {
       "id": "chanclas",
       "name": "Chanclas Coragem",
       "desc": "Suela EVA ultraligera. Logo Coragem en relieve y tu nombre personalizado. Perfectas para el vestuario.",
