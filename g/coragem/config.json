@@ -64,7 +64,7 @@
     {
       "id": "camiseta-logo",
       "name": "Camiseta Coragem Logo",
-      "desc": "Camiseta unisex de manga corta en 100% algodón ring spun, punto liso 190 g/m². Cuello redondo en canalé 1x1 con elastano. Logo Coragem en el pecho y logo grande Coragem Jiu Jitsu en la espalda. Elige corte regular u oversize.",
+      "desc": "Camiseta unisex de manga corta en 100% algodón ring spun, punto liso 190 g/m². Cuello redondo en canalé 1x1 con elastano. Logo Coragem en el pecho y logo grande Coragem Jiu Jitsu en la espalda.",
       "price": 25,
       "category": "ropa",
       "badge": "NUEVO",
@@ -85,17 +85,48 @@
       "images": [
         "img/camiseta-logo-espalda.webp",
         "img/camiseta-logo-frente.webp"
+      ]
+    },
+    {
+      "id": "camiseta-logo-oversize",
+      "name": "Camiseta Coragem Logo Oversize",
+      "desc": "Camiseta oversize de manga corta en 100% algodón ring spun, punto liso 200 g/m². Cuello en canalé 1x1 con elastano y costuras laterales. Logo Coragem en el pecho y logo grande Coragem Jiu Jitsu en la espalda.",
+      "price": 25,
+      "category": "ropa",
+      "badge": "NUEVO",
+      "emoji": "👕",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
       ],
-      "model_label": "ESTILO",
-      "models": [
-        {
-          "id": "regular",
-          "label": "REGULAR"
-        },
-        {
-          "id": "oversize",
-          "label": "OVERSIZE"
-        }
+      "images": [
+        "img/camiseta-oversize-logo-espalda.webp",
+        "img/camiseta-oversize-frente.webp"
+      ]
+    },
+    {
+      "id": "camiseta-oversize",
+      "name": "Camiseta Coragem Oversize",
+      "desc": "Camiseta oversize de manga corta en 100% algodón ring spun, punto liso 200 g/m². Cuello en canalé 1x1 con elastano y costuras laterales. Logo Coragem en el pecho y la definición «co·ra·gem» en la espalda.",
+      "price": 25,
+      "category": "ropa",
+      "badge": "NUEVO",
+      "emoji": "👕",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "images": [
+        "img/camiseta-oversize-definicion-espalda.webp",
+        "img/camiseta-oversize-frente.webp"
       ]
     },
     {
